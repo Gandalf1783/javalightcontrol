@@ -1,4 +1,4 @@
-package main;
+package threads;
 
 import java.beans.ExceptionListener;
 import java.beans.XMLDecoder;
@@ -6,13 +6,10 @@ import java.beans.XMLEncoder;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+
+import effects.Effect;
 import preferences.Settings;
 import preferences.UniverseOut;
-import threads.ArtNetThread;
-import threads.CalculateThread;
-import threads.ConsoleThread;
-import threads.SessionThread;
-import threads.WindowThread;
 
 public class Main {
 
@@ -20,12 +17,19 @@ public class Main {
 
 	public static final String VERSION = "1.3-DEV";
 	public static final String NET_VERSION = "0.0-DEV";
+	//Setting up Threads
+	private static ArtNetThread artNetThread = new ArtNetThread();
+	private static WindowThread windowThread = new WindowThread();
+	private static ConsoleThread consoleThread = new ConsoleThread();
+	private static CalculateThread calculateThread = new CalculateThread();
+	private static SessionThread sessionThread = new SessionThread();
 
-	private static Thread artnet_Thread = new Thread(new ArtNetThread());
-	private static Thread window_Thread = new Thread(new WindowThread());
-	private static Thread console_Thread = new Thread(new ConsoleThread());
-	private static Thread calculate_Thread = new Thread(new CalculateThread());
-	private static Thread session_Thread = new Thread(new SessionThread());
+	//Creating Threads from Runnables
+	private static Thread artnetRunnable = new Thread(artNetThread);
+	private static Thread windowRunnable = new Thread(windowThread);
+	private static Thread consoleRunnable = new Thread(consoleThread);
+	private static Thread calculateRunnable = new Thread(calculateThread);
+	private static Thread sessionRunnable = new Thread(sessionThread);
 
 	private static Settings settings;
 
@@ -35,17 +39,17 @@ public class Main {
 		System.out.println("[JLC] Loading Settings");
 		loadSettings();
 		System.out.println("[JLC] Initialising & Starting Threads...");
-		artnet_Thread.start();
-		window_Thread.start();
-		calculate_Thread.start();
-		console_Thread.start();
-		session_Thread.start();
+		consoleRunnable.start();
+		artnetRunnable.start();
+		windowRunnable.start();
+		sessionRunnable.start();
+		calculateRunnable.start();
 		System.out.println("[JLC] System started.");
 	}
 
 	private static void loadSettings() {
 		settings = new Settings();
-		String[] ip = new String[0];
+		String[] ip = {"127.0.0.1"};
 
 		// Setting Outputs for ArtNet
 		UniverseOut uni0 = new UniverseOut();
@@ -96,14 +100,18 @@ public class Main {
 		xml.close();
 		System.out.println("SETTINGS: Proj-Name: " + temp_settings.getProjectName());
 		Main.setSettings(temp_settings);
+		if(Main.getSettings().getDmxData() != null) {
+			Main.dmxData = Main.getSettings().getDmxData();
+		}
 	}
 
 	public static void shutdown() {
 		System.out.println("[JLC] Terminating Threads...");
-		window_Thread.interrupt();
-		calculate_Thread.interrupt();
-		console_Thread.interrupt();
-		session_Thread.interrupt();
+		windowRunnable.interrupt();
+		calculateRunnable.interrupt();
+		windowRunnable.interrupt();
+		sessionRunnable.interrupt();
+
 		saveProject(settings.getProjectName());
 
 		byte[][] temp_dmxData = new byte[15][512];
@@ -115,14 +123,15 @@ public class Main {
 
 		Main.setDmxData(temp_dmxData);
 
-		artnet_Thread.interrupt();
+		artnetRunnable.interrupt();
 		System.out.println("[JLC] Program shutdown");
 		System.exit(0);
 	}
 
 	public static void setDmxByte(byte value, int universe, int address) {
 		if (!(universe > settings.getUniverseLimit()) && !(universe < 0)) {
-			if (address <= 512 && !(address < 1)) {
+			if (address <= 512 && !(address < 0)) {
+				byte bytes = value;
 				dmxData[universe][address] = value;
 			} else {
 				System.out.println("{setDmxByte} Address \"" + address + "\" to high/low!");
@@ -143,6 +152,9 @@ public class Main {
 			System.out.println("Replacing wrong characters");
 			projectname.replace("\\s+", "-");
 		}
+		Effect[] effects = calculateThread.getCalculatingEffects();
+		Main.getSettings().setRunningEffects(effects);
+		Main.getSettings().setDmxData(dmxData);
 
 		try {
 

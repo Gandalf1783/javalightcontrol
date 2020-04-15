@@ -1,13 +1,12 @@
 package threads;
 
 import ch.bildspur.artnet.ArtNetClient;
-import main.Main;
 import preferences.UniverseOut;
 
 public class ArtNetThread implements Runnable {
 
 	private static Boolean shouldStop = false;
-	private static int fps = 10000;
+	private static int fps = 120;
 
 	public static ArtNetClient artnet;
 
@@ -41,8 +40,6 @@ public class ArtNetThread implements Runnable {
 					lastFpsTime = 0;
 					fps = 0;
 				}
-
-				artnet.broadcastDmx(0, 0, Main.getUniverseData(0));
 
 				// Get all aditional unicast ip's and send to them:
 				for (int i = 0; i < Main.getSettings().getUniverseOut().length; i++) {

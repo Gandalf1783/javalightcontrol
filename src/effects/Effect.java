@@ -1,100 +1,59 @@
 package effects;
 
-import java.util.UUID;
+import java.io.Serializable;
 
-public class Effect {
+public class Effect implements Serializable {
 
-	public final UUID uuid = UUID.randomUUID();
+	/**
+	 *
+	 */
+	private final long serialVersionUID = 1534438395675389116L;
+
 	public double valueNow = 1;
 	public double valueBefore = valueNow;
 	public double valueTarget = 255;
+
 	public int frames = 1;
-	private Boolean finished = false;
+
 	public int universe = 0;
 	public int address = 0;
-	public double faktor = 1;
 
-	public void calculate() {
-		valueNow = valueNow + ((valueTarget / valueBefore) / frames);
-		frames--;
-	}
+	public Effect() {}
 
-	public boolean isFinished() {
-		if (valueNow >= valueTarget) {
-			valueNow = valueTarget;
-			return true;
-		}
-		return false;
-	}
-
-	public double getValueNow() {
+	public Double getValueNow() {
 		return valueNow;
 	}
-
-	public void setValueNow(double valueNow) {
+	public void setValueNow(Double valueNow) {
 		this.valueNow = valueNow;
 	}
-
-	public double getValueBefore() {
+	public Double getValueBefore() {
 		return valueBefore;
 	}
-
-	public void setValueBefore(double valueBefore) {
+	public void setValueBefore(Double valueBefore) {
 		this.valueBefore = valueBefore;
 	}
-
-	public double getValueTarget() {
+	public Double getValueTarget(){
 		return valueTarget;
 	}
-
-	public void setValueTarget(double valueTarget) {
+	public void setValueTarget(Double valueTarget) {
 		this.valueTarget = valueTarget;
 	}
-
 	public int getFrames() {
 		return frames;
 	}
-
 	public void setFrames(int frames) {
 		this.frames = frames;
 	}
-
-	public Boolean getFinished() {
-		return finished;
-	}
-
-	public void setFinished(Boolean finished) {
-		this.finished = finished;
-	}
-
 	public int getUniverse() {
 		return universe;
 	}
-
 	public void setUniverse(int universe) {
 		this.universe = universe;
 	}
-
 	public int getAddress() {
 		return address;
 	}
-
 	public void setAddress(int address) {
 		this.address = address;
 	}
-
-	public double getFaktor() {
-		return faktor;
-	}
-
-	public void setFaktor(double faktor) {
-		this.faktor = faktor;
-	}
-
-	public UUID getUuid() {
-		return uuid;
-	}
-
-	
-	
 }

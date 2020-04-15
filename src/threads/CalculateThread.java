@@ -1,17 +1,22 @@
 package threads;
 
 import effects.Effect;
-import main.Main;
 
 public class CalculateThread implements Runnable {
 
 	private static Boolean shouldStop = false;
 
 	public static Effect[] calculatingEffects;
-	public final static int TARGET_FPS = 120;
+
+	public final static int TARGET_FPS = 500;
 
 	private void init() {
-		calculatingEffects = new Effect[Main.getSettings().getEffectLimit()];
+		calculatingEffects = new Effect[0];
+		Effect e = new Effect();
+		e.address = 1;
+		e.valueTarget = 127;
+		e.frames = 1500;
+		addEffect(e);
 		System.out.println("[Calculation] Thread started.");
 	}
 
@@ -19,10 +24,19 @@ public class CalculateThread implements Runnable {
 		return calculatingEffects;
 	}
 
-	public static void setCalculatingEffects(Effect[] calculatingEffects) {
-		CalculateThread.calculatingEffects = calculatingEffects;
+	public boolean isFinished(Effect e) {
+		if (e.getValueNow() >= e.getValueTarget()) {
+			e.setValueNow(e.getValueTarget());
+			return true;
+		}
+		return false;
 	}
-
+	public void calculate(Effect e) {
+		e.setValueNow(e.getValueNow()+ ((e.getValueTarget() / e.getValueBefore()) / e.getFrames()));
+		int frames = e.getFrames();
+		frames--;
+		e.setFrames(frames);
+	}
 	@Override
 	public void run() {
 		init();
@@ -44,9 +58,9 @@ public class CalculateThread implements Runnable {
 
 				for (Effect e1 : calculatingEffects) {
 					if (e1 != null) {
-						e1.calculate();
+						calculate(e1);
 						Main.setDmxByte((byte) e1.valueNow, e1.universe, e1.address);
-						if (e1.isFinished()) {
+						if (isFinished(e1)) {
 							stopEffect(getIndex(e1));
 						}
 					}
@@ -65,14 +79,6 @@ public class CalculateThread implements Runnable {
 
 		}
 		System.out.println("[Calculation] Thread stopped.");
-	}
-
-	public static Boolean getShouldStop() {
-		return shouldStop;
-	}
-
-	public static void setShouldStop(Boolean shouldStop) {
-		CalculateThread.shouldStop = shouldStop;
 	}
 
 	public static void stopEffect(int index) {
@@ -96,16 +102,16 @@ public class CalculateThread implements Runnable {
 	
 	public static void addEffect(Effect e) {
 		if(e != null) {
-			Effect[] temp_effect = new Effect[calculatingEffects.length];
-			for (int i = 0; i < temp_effect.length; i++) {
-					temp_effect[i] = calculatingEffects[i];
+			Effect[] temp_effects = new Effect[calculatingEffects.length+1];
+			int i = 0;
+			for (Effect temp : calculatingEffects) {
+				temp_effects[i] = temp;
+				i++;
 			}
-			temp_effect[calculatingEffects.length] = e;
-			calculatingEffects = temp_effect;
+			temp_effects[i] = e;
+			calculatingEffects = temp_effects;
+			System.out.println("LENGTH OF NEW ARRAY IS "+temp_effects.length);
 		}
 	}
 
-	public static int getFPS() {
-		return TARGET_FPS;
-	}
 }

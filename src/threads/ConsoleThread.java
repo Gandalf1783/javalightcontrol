@@ -1,22 +1,22 @@
 package threads;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
-
-import main.Main;
-import preferences.UniverseOut;
-
-import javax.xml.transform.stream.StreamSource;
 
 public class ConsoleThread implements Runnable {
 
 	private static Boolean shouldStop = false;
 
+	private void init() {
+		System.out.println("[CONSOLE THREAD] Welcome!");
+		System.out.println("JavaLightControl "+Main.getVersion() +" by Gandalf1783 (c) Copyright 2020");
+		System.out.println("Consult \"help\" for more");
+	}
+
 	@Override
 	public void run() {
-
+		init();
 		while (!shouldStop) {
 			// Enter data using BufferReader
 			BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
@@ -93,17 +93,20 @@ public class ConsoleThread implements Runnable {
 				return;
 
 			}
+
+			if(cmd.startsWith("dmx")) {
+				String[] args = cmd.split("\\s+");
+				if(args.length == 4) {
+					int universe = Integer.parseInt(args[1]);
+					int address = Integer.parseInt(args[2]);
+					int value = Integer.parseInt(args[3]);
+					Main.setDmxByte((byte) value, universe, address);
+
+				}
+			}
 			
 		}
 		System.out.println("[Console] Thread stopped.");
-	}
-
-	public static Boolean getShouldStop() {
-		return shouldStop;
-	}
-
-	public static void setShouldStop(Boolean shouldStop) {
-		ConsoleThread.shouldStop = shouldStop;
 	}
 
 }
