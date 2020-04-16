@@ -8,16 +8,15 @@ Latest Official Released Version: None yet :/
 Latest Pushed Version: 1.3-DEV (MAIN); 0.0-DEV (NET)
 
 Features:
-1. Project Saving and Loading
+1. Project Saving and Loading (With UI)
 2. ArtNet Output
 3. Supports up to 15 Universes
 4. Effect Engine (Fading from Value X to Y in Z seconds)
 
 Work In Progess:
-1. Commandline support
-
+1. Commandline support (Commands are unstable and not safe to use yet)
+2. User Interface
 
 To Do:
-1. User Interface
-2. Session Support (Multi-User)
-3. Receiving ArtNet
+1. Session Support (Multi-User)
+2. Receiving ArtNet
