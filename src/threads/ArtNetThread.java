@@ -1,6 +1,7 @@
 package threads;
 
 import ch.bildspur.artnet.ArtNetClient;
+import main.Main;
 import preferences.UniverseOut;
 
 public class ArtNetThread implements Runnable {

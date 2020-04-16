@@ -1,6 +1,7 @@
 package threads;
 
 import effects.Effect;
+import main.Main;
 
 public class CalculateThread implements Runnable {
 
