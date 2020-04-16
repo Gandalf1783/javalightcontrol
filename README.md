@@ -7,6 +7,8 @@ It is using the ArtNet4J (ArtNetForJava) Library, aswell as the Kryonet Library 
 Latest Official Released Version: None yet :/
 Latest Pushed Version: 1.3-DEV (MAIN); 0.0-DEV (NET)
 
+It is compiled using the OpenJDK 13.0.2. 
+
 Features:
 1. Project Saving and Loading (With UI)
 2. ArtNet Output
