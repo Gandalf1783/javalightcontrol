@@ -7,7 +7,7 @@ import preferences.UniverseOut;
 public class ArtNetThread implements Runnable {
 
 	private static Boolean shouldStop = false;
-	private static int fps = 120;
+	private static int fps = 30;
 
 	public static ArtNetClient artnet;
 

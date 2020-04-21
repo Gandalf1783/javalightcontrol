@@ -1,7 +1,7 @@
 <component name="libraryTable">
-  <library name="ArtNet4J">
+  <library name="ArtNetAPI">
     <CLASSES>
-      <root url="jar://$USER_HOME$/Desktop/ArtNet4J.jar!/" />
+      <root url="jar://C:/API/ArtNetAPI.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

@@ -1,6 +1,7 @@
 package threads;
 
 import main.Main;
+import preferences.UniverseOut;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -65,6 +66,15 @@ public class ConsoleThread implements Runnable {
 				if (args[1].equalsIgnoreCase("name")) {
 					System.out.println("Project is named \"" + Main.getSettings().getProjectName() + "\"");
 				}
+				if(args[1].equalsIgnoreCase("path")) {
+					if(Main.getJLCSettings().getProject_path() != null) {
+						if(Main.getJLCSettings().getProject_path().equals("")) {
+							System.out.println("Project path is empty. No recent Project was found.");
+						} else {
+							System.out.println("Project Path is "+Main.getJLCSettings().getProject_path() +"");
+						}
+					}
+				}
 			} else if (args.length >= 3) {
 				if (args[1].equalsIgnoreCase("name")) {
 					StringBuilder sb = new StringBuilder();
@@ -107,6 +117,12 @@ public class ConsoleThread implements Runnable {
 				Main.setDmxByte((byte) value, universe, address);
 
 			}
+		}
+
+		if(cmd.equalsIgnoreCase("test")) {
+			UniverseOut uout = new UniverseOut();
+			UniverseOut uarray[] = {uout, uout};
+			Main.getSettings().setUniverseOut(uarray);
 		}
 	}
 

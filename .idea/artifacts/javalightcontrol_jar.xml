@@ -1,0 +1,9 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="javalightcontrol:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/javalightcontrol_jar</output-path>
+    <root id="archive" name="javalightcontrol.jar">
+      <element id="module-output" name="javalightcontrol" />
+      <element id="extracted-dir" path="C:/API/ArtNetAPI.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>

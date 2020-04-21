@@ -90,11 +90,14 @@ public class Main {
 		System.out.println("[JLC] Settings loaded.");
 		System.out.println("Searching for Project-Files");
 
-		try {
-			loadSettingsFromFile("last-project");
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			System.out.println("Error while looking for project: " + e.getMessage());
+		if(!Main.getJLCSettings().getProject_path().equals("")) {
+			try {
+				loadSettingsFromFile(Main.getJLCSettings().getProject_path());
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		} else {
+			System.out.println("[JLC] No recent project found.");
 		}
 
 		System.out.println("Setting up Effects...");
@@ -102,20 +105,17 @@ public class Main {
 	}
 
 	public static void loadSettingsFromFile(String path) throws IOException {
+		System.out.println("Loading from Path: "+path);
 		FileInputStream fis = new FileInputStream(path);
 		XMLDecoder xml = new XMLDecoder(fis);
-		System.out.println("Loading...: " + path);
 		Settings temp_settings;
-		if(!(xml.readObject() instanceof Settings)) {
-			Utils.displayPopup("Opening Project", "Could not load the Project.");
-			return;
-		}
 		temp_settings = (Settings) xml.readObject();
 		xml.close();
 		Main.setSettings(temp_settings);
 		if(Main.getSettings().getDmxData() != null) {
 			Main.dmxData = Main.getSettings().getDmxData();
 		}
+		Main.isProjectLoaded = true;
 		System.out.println("Loaded.");
 	}
 	public static void loadProjectGUI() {
@@ -131,8 +131,6 @@ public class Main {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-
-			Main.isProjectLoaded = true;
 		} else {
 			Utils.displayPopup("Opening Project", "Could not load the Project.");
 			System.out.println("[ERROR] No file specified.");
@@ -176,6 +174,7 @@ public class Main {
 	}
 
 	public static void saveProject() {
+		System.out.println(Main.isProjectLoaded);
         if(Main.isProjectLoaded) {
             saveProjectHandler();
         } else {
@@ -202,7 +201,6 @@ public class Main {
 
 			try {
 				Effect[] effects = calculateThread.getCalculatingEffects();
-				Main.getSettings().setRunningEffects(effects);
 				Main.getSettings().setDmxData(dmxData);
 
 				FileOutputStream fos = new FileOutputStream(filePath);
@@ -216,7 +214,7 @@ public class Main {
 				xml.close();
 				fos.close();
 
-				loadSettingsFromFile(fileToSave.getAbsolutePath());
+				loadSettingsFromFile(filePath);
 			} catch (IOException e) {
 				System.out.println("Project could not be saved: " + e.getMessage());
 				return null;
@@ -238,12 +236,17 @@ public class Main {
 				projectname.replace("\\s+", "-");
 			}
 			Effect[] effects = calculateThread.getCalculatingEffects();
-			Main.getSettings().setRunningEffects(effects);
 			Main.getSettings().setDmxData(dmxData);
+
 
 			try {
 				String path = System.getProperty("user.dir");
-				FileOutputStream fos = new FileOutputStream(path + "\\" + projectname + ".project");
+				path = path+"\\"+projectname+".project";
+				if(!Main.getJLCSettings().getProject_path().equals("")) {
+					path = Main.getJLCSettings().getProject_path();
+				}
+				System.out.println("Saving to "+path);
+				FileOutputStream fos = new FileOutputStream(path);
 				XMLEncoder xml = new XMLEncoder(fos);
 				xml.setExceptionListener(new ExceptionListener() {
 					public void exceptionThrown(Exception e) {
@@ -300,6 +303,7 @@ public class Main {
             Main.dmxData = Main.getSettings().getDmxData();
         }
         System.out.println("Loaded.");
+        Main.isProjectLoaded = true;
         } catch (FileNotFoundException e) {
             System.out.println("EXCEPTION: "+e.getMessage());
         } catch (IOException e) {
