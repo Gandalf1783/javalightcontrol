@@ -27,3 +27,4 @@ It is compiled using the OpenJDK 13.0.2.
 
 1. Session Support (Multi-User)
 2. Receiving ArtNet
+3. Timecode
