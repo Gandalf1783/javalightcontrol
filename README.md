@@ -22,9 +22,9 @@ It is compiled using the OpenJDK 13.0.2.
 
 1. Commandline support (Commands are unstable and not safe to use yet)
 2. User Interface
+3. Session Support (Multi-User)
 
 ## To Do:
 
-1. Session Support (Multi-User)
-2. Receiving ArtNet
-3. Timecode
+1. Receiving ArtNet
+2. Timecode
