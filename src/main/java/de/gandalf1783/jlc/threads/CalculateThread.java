@@ -1,7 +1,7 @@
-package threads;
+package de.gandalf1783.jlc.threads;
 
-import effects.Effect;
-import main.Main;
+import de.gandalf1783.jlc.effects.Effect;
+import de.gandalf1783.jlc.main.Main;
 
 public class CalculateThread implements Runnable {
 

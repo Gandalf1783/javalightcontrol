@@ -1,4 +1,4 @@
-package main;
+package de.gandalf1783.jlc.main;
 
 import javax.swing.*;
 

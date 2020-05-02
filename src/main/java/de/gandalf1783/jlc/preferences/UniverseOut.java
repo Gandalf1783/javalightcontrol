@@ -1,4 +1,4 @@
-package preferences;
+package de.gandalf1783.jlc.preferences;
 
 import java.io.Serializable;
 

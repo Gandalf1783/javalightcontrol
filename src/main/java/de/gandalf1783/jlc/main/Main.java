@@ -1,15 +1,16 @@
-package main;
+package de.gandalf1783.jlc.main;
 
 import java.beans.ExceptionListener;
 import java.beans.XMLDecoder;
 import java.beans.XMLEncoder;
 import java.io.*;
+import java.util.UUID;
 
-import effects.Effect;
-import preferences.JLCSettings;
-import preferences.Settings;
-import preferences.UniverseOut;
-import threads.*;
+import de.gandalf1783.jlc.effects.Effect;
+import de.gandalf1783.jlc.preferences.JLCSettings;
+import de.gandalf1783.jlc.preferences.Settings;
+import de.gandalf1783.jlc.preferences.UniverseOut;
+import de.gandalf1783.jlc.threads.*;
 
 import javax.swing.*;
 
@@ -17,8 +18,8 @@ public class Main {
 
 	private static byte[][] dmxData = null;
 
-	public static final String VERSION = "1.3-DEV";
-	public static final String NET_VERSION = "0.0-DEV";
+	public static final String VERSION = "DEV-1.3";
+	public static final String NET_VERSION = "DEV-0.0";
 	//Setting up Threads
 	private static ArtNetThread artNetThread = new ArtNetThread();
 	private static WindowThread windowThread = new WindowThread();
@@ -36,6 +37,7 @@ public class Main {
 	private static Settings settings;
 	private static JLCSettings jlcSettings;
 	private static Boolean isProjectLoaded = false;
+	private static Boolean sessionMode;
 
 	public static void main(String[] args) {
 		System.out.println("[JLC] Starting JLC...");
@@ -53,7 +55,7 @@ public class Main {
 	private static void loadSettings() {
 	    //Preparing SETTINGS Object, if none is found.
 		settings = new Settings();
-		String[] ip = {"127.0.0.1"};
+		String[] ip = {"127.0.0.1", "192.168.178.255"};
 
 		// Setting Outputs for ArtNet
 		UniverseOut uni0 = new UniverseOut();
@@ -71,11 +73,13 @@ public class Main {
 		//Preparing JLCSETTINGS Object, if none is found.
         jlcSettings = new JLCSettings();
 
-        jlcSettings.project_path = "";
-        jlcSettings.version = Main.getVersion();
+        jlcSettings.setProject_path("");
+        jlcSettings.setVersion(Main.getVersion());
+		//jlcSettings.setSystemUUID(UUID.randomUUID());
+		loadJLCSettings();
+		saveJLCSettings();
 
-        loadJLCSettings();
-        saveJLCSettings();
+
 
 		// creating empty dmxData (with max-universes supported and 512 channels per
 		// universe)
@@ -352,7 +356,24 @@ public class Main {
 
 	public static void notify(String s) {
 		print(s);
-		// BROADCAST TO SESSION HERE
+		JDialog jDialog = new JDialog();
+		jDialog.setTitle("Notify");
+		jDialog.setSize(200,200);
+		jDialog.setModal(true);
+		jDialog.add(new JLabel(s));
+		jDialog.setVisible(true);
 	}
 
+	public static void setSessionMode(Boolean state) {
+		sessionMode = state;
+	}
+	public static Boolean getSessionMode() {
+		return sessionMode;
+	}
+	public static Runnable getSessionRunnable() {
+		return sessionRunnable;
+	}
+	public static SessionThread getSessionThread() {
+		return sessionThread;
+	}
 }

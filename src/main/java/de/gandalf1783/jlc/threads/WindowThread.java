@@ -1,7 +1,6 @@
-package threads;
+package de.gandalf1783.jlc.threads;
 
-import main.Main;
-import main.Utils;
+import de.gandalf1783.jlc.main.Main;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -9,7 +8,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import javax.swing.GroupLayout.Alignment;
-import javax.swing.LayoutStyle.ComponentPlacement;
 
 public class WindowThread implements Runnable, ActionListener {
 
@@ -112,17 +110,18 @@ public class WindowThread implements Runnable, ActionListener {
 		
 		button = new JButton("Create session");
 		button.addActionListener(e -> {
-		    //TODO: implement createSession
+			Main.getSessionThread().createSession();
 		});
 		
 		button_1 = new JButton("Join session");
+		button_1 = new JButton("Join session");
 		button_1.addActionListener(e -> {
-		    //TODO: implement joinSession
+			Main.getSessionThread().destroySession();
 		});
 		
 		button_2 = new JButton("Leave session");
 		button_2.addActionListener(e -> {
-		    //TODO: implement leaveSession
+			Main.getSessionThread().destroySession();
 		});
 		GroupLayout gl_sessionPanel = new GroupLayout(sessionPanel);
 		gl_sessionPanel.setHorizontalGroup(
@@ -157,6 +156,7 @@ public class WindowThread implements Runnable, ActionListener {
 		        .addComponent(tabbedPane, GroupLayout.DEFAULT_SIZE, 439, Short.MAX_VALUE)
 		);
 		jframe.getContentPane().setLayout(groupLayout);
+		Main.notify("Test");
 	}
 	
 	@Override

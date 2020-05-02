@@ -1,18 +1,20 @@
-package preferences;
+package de.gandalf1783.jlc.preferences;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.UUID;
 
 public class JLCSettings implements Serializable {
 
     /**
      *
      */
-    private static final long serialVersionUID = 8394221355275389116L;
+    private final long serialVersionUID = 8394221355275389116L;
 
-    public String project_path = "";
-    public String version = "";
-    public Timestamp latest_save;
+    private String project_path = "";
+    private String version = "";
+    private Timestamp latest_save;
+
     public JLCSettings() {}
 
     public String getProject_path() {

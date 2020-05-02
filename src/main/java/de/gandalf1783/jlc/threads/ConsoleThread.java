@@ -1,7 +1,7 @@
-package threads;
+package de.gandalf1783.jlc.threads;
 
-import main.Main;
-import preferences.UniverseOut;
+import de.gandalf1783.jlc.main.Main;
+import de.gandalf1783.jlc.preferences.UniverseOut;
 
 import java.io.BufferedReader;
 import java.io.IOException;

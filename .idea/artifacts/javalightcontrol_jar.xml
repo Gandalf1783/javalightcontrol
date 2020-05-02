@@ -3,7 +3,10 @@
     <output-path>$PROJECT_DIR$/out/artifacts/javalightcontrol_jar</output-path>
     <root id="archive" name="javalightcontrol.jar">
       <element id="module-output" name="javalightcontrol" />
-      <element id="extracted-dir" path="C:/API/ArtNetAPI.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/github/cansik/artnet4j/17d0220/artnet4j-17d0220.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/javax/xml/bind/jaxb-api/2.3.0/jaxb-api-2.3.0.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/sun/xml/bind/jaxb-core/2.3.0/jaxb-core-2.3.0.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/sun/xml/bind/jaxb-impl/2.3.0/jaxb-impl-2.3.0.jar" path-in-jar="/" />
     </root>
   </artifact>
 </component>

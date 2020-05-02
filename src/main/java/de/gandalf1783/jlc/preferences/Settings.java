@@ -1,6 +1,4 @@
-package preferences;
-
-import effects.Effect;
+package de.gandalf1783.jlc.preferences;
 
 import java.io.Serializable;
 
@@ -9,7 +7,7 @@ public class Settings implements Serializable {
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 2929431155275389116L;
+	private final long serialVersionUID = 2929431155275389116L;
 	private final int universeLimit = 15;
 	private int subNet = 0;
 	private final int effectLimit = 8192;

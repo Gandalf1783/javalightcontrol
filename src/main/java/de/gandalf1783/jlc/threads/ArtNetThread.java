@@ -1,8 +1,8 @@
-package threads;
+package de.gandalf1783.jlc.threads;
 
 import ch.bildspur.artnet.ArtNetClient;
-import main.Main;
-import preferences.UniverseOut;
+import de.gandalf1783.jlc.main.Main;
+import de.gandalf1783.jlc.preferences.UniverseOut;
 
 public class ArtNetThread implements Runnable {
 
@@ -24,7 +24,7 @@ public class ArtNetThread implements Runnable {
 		while (!shouldStop) {
 
 			long lastLoopTime = System.nanoTime();
-			final int TARGET_FPS = 120;
+			final int TARGET_FPS = 30;
 			final long OPTIMAL_TIME = 1000000000 / TARGET_FPS;
 			long lastFpsTime = 0;
 			while (true) {
@@ -42,19 +42,20 @@ public class ArtNetThread implements Runnable {
 					fps = 0;
 				}
 
-				// Get all aditional unicast ip's and send to them:
-				for (int i = 0; i < Main.getSettings().getUniverseOut().length; i++) {
-					if (Main.getSettings().getUniverseOut()[i] != null) {
-						UniverseOut uout = Main.getSettings().getUniverseOut()[i];
-						for (int j = 0; j < uout.getIP().length; j++) {
-							if (uout.getIP(j) != null) {
-								artnet.unicastDmx(uout.getIP(j), Main.getSettings().getSubNet(), i,
-										Main.getUniverseData(i));
+				if(!Main.getSessionMode()){
+					// Get all aditional unicast ip's and send to them:
+					for (int i = 0; i < Main.getSettings().getUniverseOut().length; i++) {
+						if (Main.getSettings().getUniverseOut()[i] != null) {
+							UniverseOut uout = Main.getSettings().getUniverseOut()[i];
+							for (int j = 0; j < uout.getIP().length; j++) {
+								if (uout.getIP(j) != null) {
+									artnet.unicastDmx(uout.getIP(j), Main.getSettings().getSubNet(), i,
+											Main.getUniverseData(i));
+								}
 							}
 						}
 					}
 				}
-
 				try {
 					long timeout = (lastLoopTime - System.nanoTime() + OPTIMAL_TIME) / 1000000;
 					if (timeout <= 0) {
