@@ -18,8 +18,7 @@ public class WindowThread implements Runnable, ActionListener {
 	JMenuBar menuBar;
 	JMenu menu1;
 	JMenuItem openProject, saveProject, saveProjectAs;
-	Object[] JFrameObjects = new Object[300];
-	
+	JComboBox sessionComboBox;
 	private JTabbedPane tabbedPane;
 	private JPanel effectPanel;
 	private JPanel universePanel;
@@ -28,13 +27,18 @@ public class WindowThread implements Runnable, ActionListener {
 	private JButton button;
 	private JButton button_1;
 	private JButton button_2;
+	private JButton button_3;
+
+	public JFrame getJFrame() {
+		return jframe;
+	}
 
 	/**
 	 * @wbp.parser.entryPoint
 	 */
 	private void init() {
 		try {
-			UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		} catch (ClassNotFoundException e) {
 			System.out.println("[ERROR] An unknown Error occured. \n"+e.getMessage());
 		} catch (InstantiationException e) {
@@ -57,7 +61,7 @@ public class WindowThread implements Runnable, ActionListener {
 		saveProjectAs.addActionListener(this);
 		jframe.addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
-				Main.saveProject();
+				Main.shutdown();
 			}
 		});
 		menu1.add(openProject);
@@ -67,13 +71,15 @@ public class WindowThread implements Runnable, ActionListener {
 		jframe.setJMenuBar(menuBar);
 		jframe.setVisible(true);
 		jframe.setResizable(true);
-		
 		tabbedPane = new JTabbedPane(SwingConstants.TOP);
 		effectPanel = new JPanel();
 		universePanel = new JPanel();
 		dmxPanel = new JPanel();
 		sessionPanel = new JPanel();
 		tabbedPane.addTab("Effects", effectPanel);
+		sessionComboBox = new JComboBox(Main.getSessionThread().discoverSessions());
+		sessionComboBox.setSelectedIndex(0);
+
 		GroupLayout gl_effectPanel = new GroupLayout(effectPanel);
 		gl_effectPanel.setHorizontalGroup(
 		    gl_effectPanel.createParallelGroup(Alignment.LEADING)
@@ -107,56 +113,76 @@ public class WindowThread implements Runnable, ActionListener {
 		);
 		dmxPanel.setLayout(gl_dmxPanel);
 		tabbedPane.addTab("Session", sessionPanel);
-		
+
+		//Setting the ActionListeners for the Buttons
 		button = new JButton("Create session");
 		button.addActionListener(e -> {
 			Main.getSessionThread().createSession();
 		});
-		
-		button_1 = new JButton("Join session");
 		button_1 = new JButton("Join session");
 		button_1.addActionListener(e -> {
-			Main.getSessionThread().destroySession();
+			Main.getSessionThread().joinSession();
 		});
 		
 		button_2 = new JButton("Leave session");
 		button_2.addActionListener(e -> {
 			Main.getSessionThread().destroySession();
 		});
+
+		button_3 = new JButton("Find sessions");
+		button_3.addActionListener(e -> {
+			Main.getSessionThread().discoverSessions();
+		});
+
+
+
 		GroupLayout gl_sessionPanel = new GroupLayout(sessionPanel);
 		gl_sessionPanel.setHorizontalGroup(
 		    gl_sessionPanel.createParallelGroup(Alignment.LEADING)
 		        .addGroup(gl_sessionPanel.createSequentialGroup()
-		            .addContainerGap()
-		            .addComponent(button, GroupLayout.PREFERRED_SIZE, 103, GroupLayout.PREFERRED_SIZE)
-		            .addGap(6)
-		            .addComponent(button_1)
-		            .addGap(6)
-		            .addComponent(button_2, GroupLayout.PREFERRED_SIZE, 99, GroupLayout.PREFERRED_SIZE)
-		            .addContainerGap(366, Short.MAX_VALUE))
+						.addContainerGap()
+						.addComponent(button, GroupLayout.PREFERRED_SIZE, 103, GroupLayout.PREFERRED_SIZE)
+		            	.addGap(6)
+		            	.addComponent(button_1)
+		           	 	.addGap(6)
+		           	 	.addComponent(button_2, GroupLayout.PREFERRED_SIZE, 99, GroupLayout.PREFERRED_SIZE)
+		            	.addGap(6)
+						.addComponent(button_3)
+						.addGap(6)
+						.addComponent(sessionComboBox)
+						.addContainerGap(366, Short.MAX_VALUE))
 		);
 		gl_sessionPanel.setVerticalGroup(
 		    gl_sessionPanel.createParallelGroup(Alignment.LEADING)
 		        .addGroup(gl_sessionPanel.createSequentialGroup()
 		            .addContainerGap()
 		            .addGroup(gl_sessionPanel.createParallelGroup(Alignment.LEADING)
-		                .addComponent(button)
+						.addComponent(button)
 		                .addComponent(button_1)
-		                .addComponent(button_2))
+		                .addComponent(button_2)
+						.addComponent(button_3))
 		            .addContainerGap(377, Short.MAX_VALUE))
+					.addGroup(gl_sessionPanel.createSequentialGroup()
+							.addContainerGap()
+							.addGroup(gl_sessionPanel.createParallelGroup(Alignment.LEADING)
+									.addComponent(sessionComboBox)
+							         )
+							.addContainerGap(377, Short.MAX_VALUE))
 		);
+
 		sessionPanel.setLayout(gl_sessionPanel);
 		GroupLayout groupLayout = new GroupLayout(jframe.getContentPane());
 		groupLayout.setHorizontalGroup(
 		    groupLayout.createParallelGroup(Alignment.LEADING)
 		        .addComponent(tabbedPane, GroupLayout.DEFAULT_SIZE, 684, Short.MAX_VALUE)
 		);
+
 		groupLayout.setVerticalGroup(
 		    groupLayout.createParallelGroup(Alignment.LEADING)
 		        .addComponent(tabbedPane, GroupLayout.DEFAULT_SIZE, 439, Short.MAX_VALUE)
 		);
+
 		jframe.getContentPane().setLayout(groupLayout);
-		Main.notify("Test");
 	}
 	
 	@Override

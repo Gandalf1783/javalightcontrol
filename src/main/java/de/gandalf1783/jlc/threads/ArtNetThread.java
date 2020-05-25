@@ -63,7 +63,6 @@ public class ArtNetThread implements Runnable {
 					}
 					Thread.sleep(timeout);
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
 					System.out.println("ArtNet Thread: Sleep couldn't be executed due exiting the app");
 				}
 			}

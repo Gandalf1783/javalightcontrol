@@ -35,4 +35,5 @@ public class JLCSettings implements Serializable {
     public void setLatest_save(Timestamp latest_save) {
         this.latest_save = latest_save;
     }
+
 }

@@ -1,10 +1,10 @@
 package de.gandalf1783.jlc.main;
 
+import java.awt.*;
 import java.beans.ExceptionListener;
 import java.beans.XMLDecoder;
 import java.beans.XMLEncoder;
 import java.io.*;
-import java.util.UUID;
 
 import de.gandalf1783.jlc.effects.Effect;
 import de.gandalf1783.jlc.preferences.JLCSettings;
@@ -19,7 +19,7 @@ public class Main {
 	private static byte[][] dmxData = null;
 
 	public static final String VERSION = "DEV-1.3";
-	public static final String NET_VERSION = "DEV-0.0";
+	public static final String NET_VERSION = "DEV-1.1";
 	//Setting up Threads
 	private static ArtNetThread artNetThread = new ArtNetThread();
 	private static WindowThread windowThread = new WindowThread();
@@ -37,7 +37,7 @@ public class Main {
 	private static Settings settings;
 	private static JLCSettings jlcSettings;
 	private static Boolean isProjectLoaded = false;
-	private static Boolean sessionMode;
+	private static Boolean sessionMode = false;
 
 	public static void main(String[] args) {
 		System.out.println("[JLC] Starting JLC...");
@@ -142,14 +142,14 @@ public class Main {
 
 	}
 	public static void shutdown() {
+		sessionThread.destroySession();
 		System.out.println("[JLC] Terminating Threads...");
 		windowRunnable.interrupt();
 		calculateRunnable.interrupt();
 		windowRunnable.interrupt();
 		sessionRunnable.interrupt();
-
 		saveProject();
-
+		saveJLCSettings();
 		byte[][] temp_dmxData = new byte[15][512];
 		for (int i = 0; i < 15; i++) {
 			for (int j = 0; j < 512; j++) {
@@ -178,8 +178,7 @@ public class Main {
 	}
 
 	public static void saveProject() {
-		System.out.println(Main.isProjectLoaded);
-        if(Main.isProjectLoaded) {
+        if(!Main.getJLCSettings().getProject_path().equalsIgnoreCase("")) {
             saveProjectHandler();
         } else {
             saveProjectHandlerGUI();
@@ -206,7 +205,7 @@ public class Main {
 			try {
 				Effect[] effects = calculateThread.getCalculatingEffects();
 				Main.getSettings().setDmxData(dmxData);
-
+				Main.getJLCSettings().setProject_path(filePath);
 				FileOutputStream fos = new FileOutputStream(filePath);
 				XMLEncoder xml = new XMLEncoder(fos);
 				xml.setExceptionListener(new ExceptionListener() {
@@ -221,6 +220,7 @@ public class Main {
 				loadSettingsFromFile(filePath);
 			} catch (IOException e) {
 				System.out.println("Project could not be saved: " + e.getMessage());
+				Main.getJLCSettings().setProject_path("");
 				return null;
 			}
 		} else {
@@ -230,7 +230,7 @@ public class Main {
 		return null;
 	}
 
-	public static void saveProjectHandler() {
+	private static void saveProjectHandler() {
 	        String projectname = Main.getSettings().getProjectName();
 			System.out.println("Saving Project...");
 			if (projectname == null || projectname.equalsIgnoreCase("")) {
@@ -250,6 +250,7 @@ public class Main {
 					path = Main.getJLCSettings().getProject_path();
 				}
 				System.out.println("Saving to "+path);
+				Main.getJLCSettings().setProject_path(path);
 				FileOutputStream fos = new FileOutputStream(path);
 				XMLEncoder xml = new XMLEncoder(fos);
 				xml.setExceptionListener(new ExceptionListener() {
@@ -273,15 +274,10 @@ public class Main {
             String path = System.getProperty("user.dir");
             FileOutputStream fos = new FileOutputStream(path + "\\" + "settings" + ".properties");
             XMLEncoder xml = new XMLEncoder(fos);
-            xml.setExceptionListener(new ExceptionListener() {
-                public void exceptionThrown(Exception e) {
-                    System.out.println("Exception! :" + e.toString());
-                    System.out.println("This should only occur ones, the file gets generated now and should be loaded next time.");
-                }
-            });
             xml.writeObject(Main.getJLCSettings());
             xml.close();
             fos.close();
+            System.out.println("JLC Settings saved");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -354,15 +350,24 @@ public class Main {
 		System.out.println("[JLC] " + s);
 	}
 
-	public static void notify(String s) {
-		print(s);
-		JDialog jDialog = new JDialog();
-		jDialog.setTitle("Notify");
-		jDialog.setSize(200,200);
-		jDialog.setModal(true);
-		jDialog.add(new JLabel(s));
-		jDialog.setVisible(true);
-	}
+    public static void notify(String s) {
+	    System.out.println("[JLC] "+s);
+        Thread t = new Thread(() -> {
+            JDialog jDialog = new JDialog();
+            jDialog.setSize(200, 200);
+            Toolkit toolkit = Toolkit.getDefaultToolkit();
+            Dimension screenSize = toolkit.getScreenSize();
+            int x = (screenSize.width - jDialog.getWidth()) / 2;
+            int y = (screenSize.height - jDialog.getHeight()) / 2;
+            jDialog.setLocation(x, y);
+            jDialog.setTitle("Notify");
+            jDialog.setSize(200,200);
+            jDialog.setModal(true);
+            jDialog.add(new JLabel(s, SwingConstants.CENTER));
+            jDialog.setVisible(true);
+        });
+        t.start();
+    }
 
 	public static void setSessionMode(Boolean state) {
 		sessionMode = state;
