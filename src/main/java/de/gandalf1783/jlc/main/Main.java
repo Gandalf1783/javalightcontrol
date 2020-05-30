@@ -1,12 +1,13 @@
 package de.gandalf1783.jlc.main;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.beans.ExceptionListener;
 import java.beans.XMLDecoder;
 import java.beans.XMLEncoder;
 import java.io.*;
 
-import de.gandalf1783.jlc.effects.Effect;
 import de.gandalf1783.jlc.preferences.JLCSettings;
 import de.gandalf1783.jlc.preferences.Settings;
 import de.gandalf1783.jlc.preferences.UniverseOut;
@@ -36,7 +37,6 @@ public class Main {
 
 	private static Settings settings;
 	private static JLCSettings jlcSettings;
-	private static Boolean isProjectLoaded = false;
 	private static Boolean sessionMode = false;
 
 	public static void main(String[] args) {
@@ -119,7 +119,6 @@ public class Main {
 		if(Main.getSettings().getDmxData() != null) {
 			Main.dmxData = Main.getSettings().getDmxData();
 		}
-		Main.isProjectLoaded = true;
 		System.out.println("Loaded.");
 	}
 	public static void loadProjectGUI() {
@@ -142,7 +141,7 @@ public class Main {
 
 	}
 	public static void shutdown() {
-		sessionThread.destroySession();
+		SessionThread.destroySession();
 		System.out.println("[JLC] Terminating Threads...");
 		windowRunnable.interrupt();
 		calculateRunnable.interrupt();
@@ -167,7 +166,6 @@ public class Main {
 	public static void setDmxByte(byte value, int universe, int address) {
 		if (!(universe > settings.getUniverseLimit()) && !(universe < 0)) {
 			if (address <= 512 && !(address < 0)) {
-				byte bytes = value;
 				dmxData[universe][address] = value;
 			} else {
 				System.out.println("{setDmxByte} Address \"" + address + "\" to high/low!");
@@ -203,7 +201,6 @@ public class Main {
 			System.out.println("[PROJECT] " + filePath);
 
 			try {
-				Effect[] effects = calculateThread.getCalculatingEffects();
 				Main.getSettings().setDmxData(dmxData);
 				Main.getJLCSettings().setProject_path(filePath);
 				FileOutputStream fos = new FileOutputStream(filePath);
@@ -239,9 +236,7 @@ public class Main {
 			if (projectname.contains("\\s+")) {
 				projectname.replace("\\s+", "-");
 			}
-			Effect[] effects = calculateThread.getCalculatingEffects();
 			Main.getSettings().setDmxData(dmxData);
-
 
 			try {
 				String path = System.getProperty("user.dir");
@@ -303,7 +298,6 @@ public class Main {
             Main.dmxData = Main.getSettings().getDmxData();
         }
         System.out.println("Loaded.");
-        Main.isProjectLoaded = true;
         } catch (FileNotFoundException e) {
             System.out.println("EXCEPTION: "+e.getMessage());
         } catch (IOException e) {
@@ -351,23 +345,23 @@ public class Main {
 	}
 
     public static void notify(String s) {
-	    System.out.println("[JLC] "+s);
-        Thread t = new Thread(() -> {
-            JDialog jDialog = new JDialog();
-            jDialog.setSize(200, 200);
-            Toolkit toolkit = Toolkit.getDefaultToolkit();
-            Dimension screenSize = toolkit.getScreenSize();
-            int x = (screenSize.width - jDialog.getWidth()) / 2;
-            int y = (screenSize.height - jDialog.getHeight()) / 2;
-            jDialog.setLocation(x, y);
-            jDialog.setTitle("Notify");
-            jDialog.setSize(200,200);
-            jDialog.setModal(true);
-            jDialog.add(new JLabel(s, SwingConstants.CENTER));
-            jDialog.setVisible(true);
-        });
-        t.start();
-    }
+		JDialog d;
+		JFrame f= new JFrame();
+		d = new JDialog(f , "Notify", true);
+		d.setLayout( new FlowLayout() );
+		JButton b = new JButton ("OK");
+		b.addActionListener ( new ActionListener()
+		{
+			public void actionPerformed( ActionEvent e )
+			{
+				d.setVisible(false);
+			}
+		});
+		d.add( new JLabel (s));
+		d.add(b);
+		d.setSize(300,300);
+		d.setVisible(true);
+	}
 
 	public static void setSessionMode(Boolean state) {
 		sessionMode = state;
@@ -381,4 +375,7 @@ public class Main {
 	public static SessionThread getSessionThread() {
 		return sessionThread;
 	}
+	public static CalculateThread getCalculateThread() {
+	    return calculateThread;
+    }
 }

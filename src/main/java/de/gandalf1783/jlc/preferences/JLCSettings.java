@@ -2,14 +2,13 @@ package de.gandalf1783.jlc.preferences;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
-import java.util.UUID;
 
 public class JLCSettings implements Serializable {
 
     /**
      *
      */
-    private final long serialVersionUID = 8394221355275389116L;
+    private static final long serialVersionUID = 2785962654399999523L;
 
     private String project_path = "";
     private String version = "";

@@ -8,6 +8,6 @@ public class NotifyThread implements Runnable {
 
     @Override
     public void run() {
-
+        init();
     }
 }

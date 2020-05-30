@@ -3,7 +3,6 @@ package de.gandalf1783.jlc.sessions;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import de.gandalf1783.jlc.main.Main;
-import de.gandalf1783.jlc.preferences.Settings;
 
 public class ServerListener extends Listener {
 

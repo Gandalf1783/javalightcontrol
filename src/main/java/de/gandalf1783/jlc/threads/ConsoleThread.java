@@ -100,9 +100,12 @@ public class ConsoleThread implements Runnable {
 					if(args[2].equalsIgnoreCase("add")) {
 						int universe = Integer.parseInt(args[3]);
 						String IP = args[4];
+						System.out.println(IP + " | "+universe);
 					} else if(args[2].equalsIgnoreCase("remove")) {
 						int universe = Integer.parseInt(args[3]);
 						String IP = args[4];
+						System.out.println(IP + " | "+universe);
+						
 					}
 				}
 			}

@@ -13,11 +13,6 @@ public class CalculateThread implements Runnable {
 
 	private void init() {
 		calculatingEffects = new Effect[0];
-		Effect e = new Effect();
-		e.address = 1;
-		e.valueTarget = 127;
-		e.frames = 500;
-		addEffect(e);
 		System.out.println("[Calculation] Thread started.");
 	}
 

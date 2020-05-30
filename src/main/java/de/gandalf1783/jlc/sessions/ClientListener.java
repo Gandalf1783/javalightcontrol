@@ -2,7 +2,6 @@ package de.gandalf1783.jlc.sessions;
 
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
-import com.sun.xml.bind.v2.runtime.reflect.Lister;
 import de.gandalf1783.jlc.main.Main;
 import de.gandalf1783.jlc.preferences.Settings;
 

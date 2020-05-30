@@ -4,11 +4,12 @@ import java.io.Serializable;
 
 public class Effect implements Serializable {
 
+
 	/**
 	 *
 	 */
-	private final long serialVersionUID = 1534438395675389116L;
-
+	private static final long serialVersionUID = 5782987786864602144L;
+	
 	public double valueNow = 1;
 	public double valueBefore = valueNow;
 	public double valueTarget = 255;
