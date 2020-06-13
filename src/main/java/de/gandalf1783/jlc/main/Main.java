@@ -1,19 +1,17 @@
 package de.gandalf1783.jlc.main;
 
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.beans.ExceptionListener;
-import java.beans.XMLDecoder;
-import java.beans.XMLEncoder;
-import java.io.*;
-
 import de.gandalf1783.jlc.preferences.JLCSettings;
 import de.gandalf1783.jlc.preferences.Settings;
 import de.gandalf1783.jlc.preferences.UniverseOut;
 import de.gandalf1783.jlc.threads.*;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
+import java.awt.image.BufferedImage;
+import java.beans.ExceptionListener;
+import java.beans.XMLDecoder;
+import java.beans.XMLEncoder;
+import java.io.*;
 
 public class Main {
 
@@ -21,14 +19,14 @@ public class Main {
 
 	public static final String VERSION = "DEV-1.3";
 	public static final String NET_VERSION = "DEV-1.1";
-	//Setting up Threads
+	// Setting up Threads
 	private static ArtNetThread artNetThread = new ArtNetThread();
 	private static WindowThread windowThread = new WindowThread();
 	private static ConsoleThread consoleThread = new ConsoleThread();
 	private static CalculateThread calculateThread = new CalculateThread();
 	private static SessionThread sessionThread = new SessionThread();
 
-	//Creating Threads from Runnables
+	// Creating Threads from Runnables
 	private static Thread artnetRunnable = new Thread(artNetThread);
 	private static Thread windowRunnable = new Thread(windowThread);
 	private static Thread consoleRunnable = new Thread(consoleThread);
@@ -53,7 +51,7 @@ public class Main {
 	}
 
 	private static void loadSettings() {
-	    //Preparing SETTINGS Object, if none is found.
+		// Preparing SETTINGS Object, if none is found.
 		settings = new Settings();
 		String[] ip = {"127.0.0.1", "192.168.178.255"};
 
@@ -70,16 +68,14 @@ public class Main {
 		// applying settings
 		setSettings(settings);
 
-		//Preparing JLCSETTINGS Object, if none is found.
-        jlcSettings = new JLCSettings();
+		// Preparing JLCSETTINGS Object, if none is found.
+		jlcSettings = new JLCSettings();
 
-        jlcSettings.setProject_path("");
-        jlcSettings.setVersion(Main.getVersion());
-		//jlcSettings.setSystemUUID(UUID.randomUUID());
+		jlcSettings.setProject_path("");
+		jlcSettings.setVersion(Main.getVersion());
+		// jlcSettings.setSystemUUID(UUID.randomUUID());
 		loadJLCSettings();
 		saveJLCSettings();
-
-
 
 		// creating empty dmxData (with max-universes supported and 512 channels per
 		// universe)
@@ -94,7 +90,7 @@ public class Main {
 		System.out.println("[JLC] Settings loaded.");
 		System.out.println("Searching for Project-Files");
 
-		if(!Main.getJLCSettings().getProject_path().equals("")) {
+		if (!Main.getJLCSettings().getProject_path().equals("")) {
 			try {
 				loadSettingsFromFile(Main.getJLCSettings().getProject_path());
 			} catch (IOException e) {
@@ -109,18 +105,19 @@ public class Main {
 	}
 
 	public static void loadSettingsFromFile(String path) throws IOException {
-		System.out.println("Loading from Path: "+path);
+		System.out.println("Loading from Path: " + path);
 		FileInputStream fis = new FileInputStream(path);
 		XMLDecoder xml = new XMLDecoder(fis);
 		Settings temp_settings;
 		temp_settings = (Settings) xml.readObject();
 		xml.close();
 		Main.setSettings(temp_settings);
-		if(Main.getSettings().getDmxData() != null) {
+		if (Main.getSettings().getDmxData() != null) {
 			Main.dmxData = Main.getSettings().getDmxData();
 		}
 		System.out.println("Loaded.");
 	}
+
 	public static void loadProjectGUI() {
 		JFrame parentFrame = new JFrame();
 
@@ -140,6 +137,7 @@ public class Main {
 		}
 
 	}
+
 	public static void shutdown() {
 		SessionThread.destroySession();
 		System.out.println("[JLC] Terminating Threads...");
@@ -176,12 +174,12 @@ public class Main {
 	}
 
 	public static void saveProject() {
-        if(!Main.getJLCSettings().getProject_path().equalsIgnoreCase("")) {
-            saveProjectHandler();
-        } else {
-            saveProjectHandlerGUI();
-        }
-    }
+		if (!Main.getJLCSettings().getProject_path().equalsIgnoreCase("")) {
+			saveProjectHandler();
+		} else {
+			saveProjectHandlerGUI();
+		}
+	}
 
 	public static String saveProjectHandlerGUI() {
 		JFrame parentFrame = new JFrame();
@@ -195,8 +193,8 @@ public class Main {
 			System.out.println("[PROJECT] Saving in progress....");
 			File fileToSave = fileChooser.getSelectedFile();
 			String filePath = fileToSave.getAbsolutePath();
-			if(!fileToSave.getAbsolutePath().endsWith(".project")) {
-				filePath = fileToSave.getAbsolutePath()+".project";
+			if (!fileToSave.getAbsolutePath().endsWith(".project")) {
+				filePath = fileToSave.getAbsolutePath() + ".project";
 			}
 			System.out.println("[PROJECT] " + filePath);
 
@@ -228,90 +226,90 @@ public class Main {
 	}
 
 	private static void saveProjectHandler() {
-	        String projectname = Main.getSettings().getProjectName();
-			System.out.println("Saving Project...");
-			if (projectname == null || projectname.equalsIgnoreCase("")) {
-				projectname = "last-project";
-			}
-			if (projectname.contains("\\s+")) {
-				projectname.replace("\\s+", "-");
-			}
-			Main.getSettings().setDmxData(dmxData);
+		String projectname = Main.getSettings().getProjectName();
+		System.out.println("Saving Project...");
+		if (projectname == null || projectname.equalsIgnoreCase("")) {
+			projectname = "last-project";
+		}
+		if (projectname.contains("\\s+")) {
+			projectname.replace("\\s+", "-");
+		}
+		Main.getSettings().setDmxData(dmxData);
 
-			try {
-				String path = System.getProperty("user.dir");
-				path = path+"\\"+projectname+".project";
-				if(!Main.getJLCSettings().getProject_path().equals("")) {
-					path = Main.getJLCSettings().getProject_path();
+		try {
+			String path = System.getProperty("user.dir");
+			path = path + "\\" + projectname + ".project";
+			if (!Main.getJLCSettings().getProject_path().equals("")) {
+				path = Main.getJLCSettings().getProject_path();
+			}
+			System.out.println("Saving to " + path);
+			Main.getJLCSettings().setProject_path(path);
+			FileOutputStream fos = new FileOutputStream(path);
+			XMLEncoder xml = new XMLEncoder(fos);
+			xml.setExceptionListener(new ExceptionListener() {
+				public void exceptionThrown(Exception e) {
+					System.out.println("Exception! :" + e.toString());
 				}
-				System.out.println("Saving to "+path);
-				Main.getJLCSettings().setProject_path(path);
-				FileOutputStream fos = new FileOutputStream(path);
-				XMLEncoder xml = new XMLEncoder(fos);
-				xml.setExceptionListener(new ExceptionListener() {
-					public void exceptionThrown(Exception e) {
-						System.out.println("Exception! :" + e.toString());
-					}
-				});
-				xml.writeObject(getSettings());
-				xml.close();
-				fos.close();
+			});
+			xml.writeObject(getSettings());
+			xml.close();
+			fos.close();
 
-			} catch (IOException e) {
-				System.out.println("Project could not be saved: " + e.getMessage());
-				return;
-			}
-			System.out.println("Project was saved.");
+		} catch (IOException e) {
+			System.out.println("Project could not be saved: " + e.getMessage());
+			return;
+		}
+		System.out.println("Project was saved.");
 	}
 
-    public static void saveJLCSettings() {
-        try {
-            String path = System.getProperty("user.dir");
-            FileOutputStream fos = new FileOutputStream(path + "\\" + "settings" + ".properties");
-            XMLEncoder xml = new XMLEncoder(fos);
-            xml.writeObject(Main.getJLCSettings());
-            xml.close();
-            fos.close();
-            System.out.println("JLC Settings saved");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+	public static void saveJLCSettings() {
+		try {
+			String path = System.getProperty("user.dir");
+			FileOutputStream fos = new FileOutputStream(path + "\\" + "settings" + ".properties");
+			XMLEncoder xml = new XMLEncoder(fos);
+			xml.writeObject(Main.getJLCSettings());
+			xml.close();
+			fos.close();
+			System.out.println("JLC Settings saved");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 
-    }
+	}
 
-    public static void loadJLCSettings() {
-        try {
-        String path = System.getProperty("user.dir");
-        path = path+"\\settings.properties";
-        FileInputStream fis = null;
+	public static void loadJLCSettings() {
+		try {
+			String path = System.getProperty("user.dir");
+			path = path + "\\settings.properties";
+			FileInputStream fis = null;
 
-        fis = new FileInputStream(path);
+			fis = new FileInputStream(path);
 
-        XMLDecoder xml = new XMLDecoder(fis);
-        System.out.println("Loading...: " + path);
-        JLCSettings temp_settings;
-        temp_settings = (JLCSettings) xml.readObject();
-        xml.close();
-        fis.close();
-        setJLCSettings(temp_settings);
-        if(Main.getSettings().getDmxData() != null) {
-            Main.dmxData = Main.getSettings().getDmxData();
-        }
-        System.out.println("Loaded.");
-        } catch (FileNotFoundException e) {
-            System.out.println("EXCEPTION: "+e.getMessage());
-        } catch (IOException e) {
-            System.out.println("EXCEPTION: "+e.getMessage());
-        }
-    }
+			XMLDecoder xml = new XMLDecoder(fis);
+			System.out.println("Loading...: " + path);
+			JLCSettings temp_settings;
+			temp_settings = (JLCSettings) xml.readObject();
+			xml.close();
+			fis.close();
+			setJLCSettings(temp_settings);
+			if (Main.getSettings().getDmxData() != null) {
+				Main.dmxData = Main.getSettings().getDmxData();
+			}
+			System.out.println("Loaded.");
+		} catch (FileNotFoundException e) {
+			System.out.println("EXCEPTION: " + e.getMessage());
+		} catch (IOException e) {
+			System.out.println("EXCEPTION: " + e.getMessage());
+		}
+	}
 
-    public static JLCSettings getJLCSettings() {
-	    return jlcSettings;
-    }
+	public static JLCSettings getJLCSettings() {
+		return jlcSettings;
+	}
 
-    public static void setJLCSettings(JLCSettings settings) {
-	    Main.jlcSettings = settings;
-    }
+	public static void setJLCSettings(JLCSettings settings) {
+		Main.jlcSettings = settings;
+	}
 
 	public static byte[][] getDmxData() {
 		return dmxData;
@@ -344,38 +342,43 @@ public class Main {
 		System.out.println("[JLC] " + s);
 	}
 
-    public static void notify(String s) {
-		JDialog d;
-		JFrame f= new JFrame();
-		d = new JDialog(f , "Notify", true);
-		d.setLayout( new FlowLayout() );
-		JButton b = new JButton ("OK");
-		b.addActionListener ( new ActionListener()
-		{
-			public void actionPerformed( ActionEvent e )
-			{
-				d.setVisible(false);
-			}
-		});
-		d.add( new JLabel (s));
-		d.add(b);
-		d.setSize(300,300);
-		d.setVisible(true);
+	public static void notify(String s) {
+		System.out.println("[NOTIFY] - " + s);
 	}
 
 	public static void setSessionMode(Boolean state) {
 		sessionMode = state;
 	}
+
 	public static Boolean getSessionMode() {
 		return sessionMode;
 	}
+
 	public static Runnable getSessionRunnable() {
 		return sessionRunnable;
 	}
+
+	public static WindowThread getWindowThread() {
+		return windowThread;
+	}
+
 	public static SessionThread getSessionThread() {
 		return sessionThread;
 	}
+
 	public static CalculateThread getCalculateThread() {
-	    return calculateThread;
-    }
+		return calculateThread;
+	}
+
+	public static BufferedImage loadImage(String path) {
+		try {
+			System.out.println(path);
+			return ImageIO.read(Main.class.getResource(path));
+		} catch (IOException e) {
+			e.printStackTrace();
+			System.exit(1);
+		}
+		return null;
+	}
+
 }

@@ -11,33 +11,6 @@ public class ConsoleThread implements Runnable {
 
 	private static Boolean shouldStop = false;
 
-	private void init() {
-		System.out.println("[CONSOLE THREAD] Welcome!");
-		System.out.println("JavaLightControl "+ Main.getVersion() +" by Gandalf1783 (c) Copyright 2020");
-		System.out.println("Consult \"help\" for more");
-	}
-
-	@Override
-	public void run() {
-		init();
-		while (!shouldStop) {
-			// Enter data using BufferReader
-			BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-
-			// Reading data using readLine
-			String cmd = "";
-
-			try {
-				cmd = reader.readLine();
-				runCommand(cmd);
-			} catch (IOException e) {
-				System.out.println("[Console] EXCEPTION: "+e.getMessage());
-			}
-			
-		}
-		System.out.println("[Console] Thread stopped.");
-	}
-
 	public static void runCommand(String cmd) {
 		if (cmd.equalsIgnoreCase("shutdown") || cmd.equalsIgnoreCase("exit")) {
 			System.out.println("[CONSOLE] Initiated Shutdown");
@@ -105,7 +78,7 @@ public class ConsoleThread implements Runnable {
 						int universe = Integer.parseInt(args[3]);
 						String IP = args[4];
 						System.out.println(IP + " | "+universe);
-						
+
 					}
 				}
 			}
@@ -113,7 +86,7 @@ public class ConsoleThread implements Runnable {
 
 		if(cmd.startsWith("dmx")) {
 			String[] args = cmd.split("\\s+");
-			if(args.length == 4) {
+			if (args.length == 4) {
 				int universe = Integer.parseInt(args[1]);
 				int address = Integer.parseInt(args[2]);
 				int value = Integer.parseInt(args[3]);
@@ -122,11 +95,44 @@ public class ConsoleThread implements Runnable {
 			}
 		}
 
-		if(cmd.equalsIgnoreCase("test")) {
+		if (cmd.equalsIgnoreCase("test")) {
 			UniverseOut uout = new UniverseOut();
-			UniverseOut uarray[] = {uout, uout};
+			UniverseOut[] uarray = {uout, uout};
 			Main.getSettings().setUniverseOut(uarray);
 		}
+	}
+
+	@Override
+	public void run() {
+		init();
+		while (!shouldStop) {
+			// Enter data using BufferReader
+			BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+
+			// Reading data using readLine
+			String cmd = "";
+
+			try {
+				cmd = reader.readLine();
+				runCommand(cmd);
+			} catch (IOException e) {
+				System.out.println("[Console] EXCEPTION: " + e.getMessage());
+			}
+
+		}
+		System.out.println("[Console] Thread stopped.");
+	}
+
+	private void init() {
+		System.out.println();
+		System.out.println();
+		System.out.println();
+		System.out.println("[CONSOLE THREAD] Welcome!");
+		System.out.println("JavaLightControl " + Main.getVersion() + " by Gandalf1783 (c) Copyright 2020");
+		System.out.println("Consult \"help\" for more");
+		System.out.println();
+		System.out.println();
+		System.out.println();
 	}
 
 }
