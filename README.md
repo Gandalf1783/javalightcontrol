@@ -5,7 +5,7 @@
 JavaLightControl (JLC) is a Lighting Control Software with 15 Universes. It mainly supports ArtNet. 
 It is using the ArtNet4J (ArtNetForJava) Library, aswell as the Kryonet Library for Session support.
 
-**Latest Official Released Version**: WIP
+**Latest Official Released Version**: DEV-1.3 (see the releases page!)
 
 **Latest Pushed Version**: 1.3-DEV (MAIN); DEV-1.1 (NET)
 
@@ -13,15 +13,15 @@ It is compiled using the OpenJDK 13.0.2.
 
 ## Features:
 
-1. Project Saving and Loading (With UI)
+1. Project Saving and Loading (With UI) (Needs to be redone for new UI.)
 2. ArtNet Output
 3. Supports up to 15 Universes
 4. Effect Engine (Fading from Value X to Y in Z seconds)
 
 ## Work In Progess:
 
-1. Commandline support (Commands are unstable and not safe to use yet)
-2. User Interface
+1. User Interface (Current Focus)
+2. Commandline support (Commands are unstable and not safe to use yet)
 3. Session Support (Multi-User)
 
 ## To Do:
