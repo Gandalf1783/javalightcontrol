@@ -37,6 +37,7 @@ public class WindowThread implements Runnable, ActionListener {
 		display.getCanvas().addMouseMotionListener(mouseManager);
 		ArrayList<UiItem> page1 = new ArrayList<>();
 		ArrayList<UiItem> page_settings = new ArrayList<>();
+		ArrayList<UiItem> page_effects = new ArrayList<>();
 		Button project_open = new Button(0, 0, 40, 110, "Open Project", g) {
 			@Override
 			public void onClick(MouseEvent e) {
@@ -61,13 +62,18 @@ public class WindowThread implements Runnable, ActionListener {
 				ArtNetThread.toggleBlackout();
 			}
 		};
+		Button effects = new Button(0, 160, 40, 110, "Effects", g) {
+			@Override
+			public void onClick(MouseEvent e) {
+				Main.getWindowThread().setCurrentPage(2);
+			}
+		};
 		Button settings = new Button(0, 432, 40, 110, "Settings", g) {
 			@Override
 			public void onClick(MouseEvent e) {
 				Main.getWindowThread().setCurrentPage(1);
 			}
 		};
-
 		Button home = new Button(0, 0, 40, 110, "Home", g) {
 			@Override
 			public void onClick(MouseEvent e) {
@@ -81,9 +87,12 @@ public class WindowThread implements Runnable, ActionListener {
 		page1.add(project_save_as);
 		page1.add(settings);
 		page1.add(blackout);
+		page1.add(effects);
 		page_settings.add(home);
+		page_effects.add(home);
 		items.add(page1);
 		items.add(page_settings);
+		items.add(page_effects);
 	}
 
 
