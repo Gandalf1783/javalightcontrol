@@ -17,7 +17,7 @@ public class Main {
 
 	private static byte[][] dmxData = null;
 
-	public static final String VERSION = "DEV-1.3";
+	public static final String VERSION = "DEV-1.7";
 	public static final String NET_VERSION = "DEV-1.1";
 	// Setting up Threads
 	private static ArtNetThread artNetThread = new ArtNetThread();
@@ -368,6 +368,10 @@ public class Main {
 
 	public static CalculateThread getCalculateThread() {
 		return calculateThread;
+	}
+
+	public static ArtNetThread getArtNetThread() {
+		return artNetThread;
 	}
 
 	public static BufferedImage loadImage(String path) {

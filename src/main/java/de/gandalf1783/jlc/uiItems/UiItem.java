@@ -1,5 +1,7 @@
 package de.gandalf1783.jlc.uiItems;
 
+import de.gandalf1783.jlc.main.Main;
+
 import java.awt.*;
 import java.awt.event.MouseEvent;
 
@@ -42,7 +44,7 @@ public class UiItem {
     }
 
     public void onMouseClicked(MouseEvent e) {
-        if (hovering)
+        if (hovering && Main.getWindowThread().isOnCurrentPage(this))
             onClick(e);
     }
 

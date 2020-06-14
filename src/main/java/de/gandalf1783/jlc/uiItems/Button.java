@@ -1,6 +1,7 @@
 package de.gandalf1783.jlc.uiItems;
 
 import de.gandalf1783.jlc.gfx.Assets;
+import de.gandalf1783.jlc.main.Main;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;
@@ -37,8 +38,9 @@ public class Button extends UiItem {
     }
 
     @Override
-    public void onClick(MouseEvent e) {
-        click = true;
+    public void onMouseRelease(MouseEvent e) {
+        if (hovering && Main.getWindowThread().isOnCurrentPage(this)) {
+            click = true;
+        }
     }
-
 }

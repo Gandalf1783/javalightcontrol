@@ -29,6 +29,10 @@ public class ToggleButton extends Button {
     @Override
     public void onClick(MouseEvent e) {
         toggled = !toggled;
+        onToggle(e);
     }
 
+    public void onToggle(MouseEvent e) {
+
+    }
 }

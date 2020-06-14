@@ -5,7 +5,8 @@ import de.gandalf1783.jlc.gfx.Display;
 import de.gandalf1783.jlc.gfx.MouseManager;
 import de.gandalf1783.jlc.main.Main;
 import de.gandalf1783.jlc.uiItems.Button;
-import de.gandalf1783.jlc.uiItems.*;
+import de.gandalf1783.jlc.uiItems.ToggleButton;
+import de.gandalf1783.jlc.uiItems.UiItem;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -21,29 +22,70 @@ public class WindowThread implements Runnable, ActionListener {
 	private Display display;
 	private BufferStrategy bs;
 	private Graphics g;
-	private ArrayList<UiItem> items;
+	ArrayList<ArrayList<UiItem>> items = new ArrayList<ArrayList<UiItem>>(4);
 	private MouseManager mouseManager;
+	private int currentPage = 0;
 
 	private void init() {
 		display = new Display("JLC", 1000, 500);
 		Assets.init();
-		items = new ArrayList<>();
 
 		mouseManager = new MouseManager();
 		display.getFrame().addMouseListener(mouseManager);
 		display.getFrame().addMouseMotionListener(mouseManager);
 		display.getCanvas().addMouseListener(mouseManager);
 		display.getCanvas().addMouseMotionListener(mouseManager);
+		ArrayList<UiItem> page1 = new ArrayList<>();
+		ArrayList<UiItem> page_settings = new ArrayList<>();
+		Button project_open = new Button(0, 0, 40, 110, "Open Project", g) {
+			@Override
+			public void onClick(MouseEvent e) {
+				Main.loadProjectGUI();
+			}
+		};
+		Button project_save = new Button(0, 40, 40, 110, "Save Project", g) {
+			@Override
+			public void onClick(MouseEvent e) {
+				Main.saveProject();
+			}
+		};
+		Button project_save_as = new Button(0, 80, 40, 110, "Save Project As", g) {
+			@Override
+			public void onClick(MouseEvent e) {
+				Main.saveProjectHandlerGUI();
+			}
+		};
+		ToggleButton blackout = new ToggleButton(0, 120, 40, 110, "Blackout", g) {
+			@Override
+			public void onToggle(MouseEvent e) {
+				ArtNetThread.toggleBlackout();
+			}
+		};
+		Button settings = new Button(0, 432, 40, 110, "Settings", g) {
+			@Override
+			public void onClick(MouseEvent e) {
+				Main.getWindowThread().setCurrentPage(1);
+			}
+		};
 
-		HorizontalScrollBar bar = new HorizontalScrollBar(40, 0, g);
-		VerticalScrollBar bar2 = new VerticalScrollBar(0, 40, g);
-		Button b = new Button(50, 50, 40, 90, "Button", g);
-		ToggleButton tb = new ToggleButton(100, 100, 50, 50, "Test", g);
-		items.add(bar2);
-		items.add(bar);
-		items.add(b);
-		items.add(tb);
+		Button home = new Button(0, 0, 40, 110, "Home", g) {
+			@Override
+			public void onClick(MouseEvent e) {
+
+				Main.getWindowThread().setCurrentPage(0);
+			}
+		};
+
+		page1.add(project_open);
+		page1.add(project_save);
+		page1.add(project_save_as);
+		page1.add(settings);
+		page1.add(blackout);
+		page_settings.add(home);
+		items.add(page1);
+		items.add(page_settings);
 	}
+
 
 	@Override
 	public void run() {
@@ -91,27 +133,35 @@ public class WindowThread implements Runnable, ActionListener {
 
 
 	public void onMouseMove(MouseEvent e) {
-		for (UiItem u : items) {
-			u.onMouseMove(e);
+		for (ArrayList<UiItem> arrayList : items) {
+			for (UiItem u : arrayList) {
+				u.onMouseMove(e);
+			}
 		}
-
 	}
 
 	public void onMouseRelease(MouseEvent e) {
-		for (UiItem u : items) {
-			u.onMouseRelease(e);
+		for (ArrayList<UiItem> arrayList : items) {
+			for (UiItem u : arrayList) {
+				u.onMouseRelease(e);
+			}
 		}
 	}
 
 	public void onMouseClicked(MouseEvent e) {
-		for (UiItem u : items) {
-			u.onMouseClicked(e);
+		for (ArrayList<UiItem> arrayList : items) {
+			for (UiItem u : arrayList) {
+				u.onMouseClicked(e);
+			}
 		}
+
 	}
 
 	public void onMouseDragged(MouseEvent e) {
-		for (UiItem u : items) {
-			u.onDrag(e);
+		for (ArrayList<UiItem> arrayList : items) {
+			for (UiItem u : arrayList) {
+				u.onDrag(e);
+			}
 		}
 	}
 
@@ -127,7 +177,7 @@ public class WindowThread implements Runnable, ActionListener {
 		//Draw Here!
 
 
-		for (UiItem item : items) {
+		for (UiItem item : items.get(currentPage)) {
 			item.tick();
 			item.render(g);
 		}
@@ -137,8 +187,24 @@ public class WindowThread implements Runnable, ActionListener {
 		g.dispose();
 	}
 
+	public Boolean isOnCurrentPage(UiItem u) {
+		return items.get(currentPage).contains(u);
+	}
+
 	public MouseManager getMouseManager() {
 		return mouseManager;
+	}
+
+	public void nextPage() {
+		currentPage++;
+	}
+
+	public void previousPage() {
+		currentPage--;
+	}
+
+	public void setCurrentPage(int page) {
+		currentPage = page;
 	}
 
 	@Override
