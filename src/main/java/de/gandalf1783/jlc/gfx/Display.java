@@ -4,12 +4,10 @@ import de.gandalf1783.jlc.main.Main;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
-public class Display implements ActionListener {
+public class Display {
 
 	private JFrame frame;
 	private Canvas canvas;
@@ -25,31 +23,11 @@ public class Display implements ActionListener {
 		createDisplay();
 	}
 
-	private void createDisplay() {
-		System.out.println("Creating Display");
-		frame = new JFrame(title);
-		frame.setSize(width, height);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setResizable(false);
-		frame.setLocationRelativeTo(null);
-		frame.setVisible(true);
-
-		canvas = new Canvas();
-		canvas.setPreferredSize(new Dimension(width, height));
-		canvas.setMaximumSize(new Dimension(width, height));
-		canvas.setMinimumSize(new Dimension(width, height));
-		canvas.setFocusable(false);
-
-		frame.addWindowListener(new WindowAdapter() {
-			public void windowClosing(final WindowEvent e) {
-				Main.shutdown();
-			}
-		});
-
-
-		frame.add(canvas);
-		//frame.pack();
-		System.out.println("Created.");
+	public static Color hex2Rgb(String colorStr) {
+		return new Color(
+				Integer.valueOf(colorStr.substring(1, 3), 16),
+				Integer.valueOf(colorStr.substring(3, 5), 16),
+				Integer.valueOf(colorStr.substring(5, 7), 16));
 	}
 
 	public Canvas getCanvas() {
@@ -60,18 +38,31 @@ public class Display implements ActionListener {
 		return frame;
 	}
 
-	public void actionPerformed(final ActionEvent e) {
-		final String s = e.getActionCommand();
-		if (s.equalsIgnoreCase("Open Project")) {
-			Main.loadProjectGUI();
-		}
-		if (s.equalsIgnoreCase("Save Project")) {
-			Main.saveProject();
-		}
-		if (s.equalsIgnoreCase("Save Project As...")) {
-			Main.saveProjectHandlerGUI();
-		}
+	private void createDisplay() {
+		System.out.println("Creating Display");
+		frame = new JFrame(title);
+		frame.setSize(width, height);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setResizable(false);
+		frame.setLocationRelativeTo(null);
+		frame.setVisible(true);
+		frame.setBackground(hex2Rgb("#484848"));
+		canvas = new Canvas();
+		canvas.setPreferredSize(new Dimension(width, height));
+		canvas.setMaximumSize(new Dimension(width, height));
+		canvas.setMinimumSize(new Dimension(width, height));
+		canvas.setFocusable(false);
+		canvas.setBackground(hex2Rgb("#484848"));
+		frame.addWindowListener(new WindowAdapter() {
+			public void windowClosing(final WindowEvent e) {
+				Main.shutdown();
+			}
+		});
 
+
+		frame.add(canvas);
+		//frame.pack();
+		System.out.println("Created.");
 	}
 
 }

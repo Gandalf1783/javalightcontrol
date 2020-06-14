@@ -118,5 +118,4 @@ public class ArtNetThread implements Runnable {
 		}
 		System.out.println("[ArtNet] Thread stopped.");
 	}
-
 }

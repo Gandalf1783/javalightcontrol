@@ -63,7 +63,7 @@ public class HorizontalScrollBar extends ScrollItem {
     }
 
     public double getSliderPosPercent() {
-        double pos = sliderPos / sliderLength;
+        double pos = (sliderPos / ((sliderLength * 40) - 40) * 100);
         return pos;
     }
 
@@ -84,7 +84,13 @@ public class HorizontalScrollBar extends ScrollItem {
     @Override
     public void onClick(MouseEvent e) {
         sliderPos = e.getX() - x - 60;
+        checkBounds();
         selected = true;
+        onChange(e);
+    }
+
+    public void onChange(MouseEvent e) {
+
     }
 
     @Override

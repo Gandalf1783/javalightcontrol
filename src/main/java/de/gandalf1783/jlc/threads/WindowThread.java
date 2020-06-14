@@ -7,6 +7,7 @@ import de.gandalf1783.jlc.main.Main;
 import de.gandalf1783.jlc.uiItems.Button;
 import de.gandalf1783.jlc.uiItems.ToggleButton;
 import de.gandalf1783.jlc.uiItems.UiItem;
+import de.gandalf1783.jlc.uiItems.VerticalScrollBar;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -27,8 +28,9 @@ public class WindowThread implements Runnable, ActionListener {
 	private int currentPage = 0;
 
 	private void init() {
-		display = new Display("JLC", 1000, 500);
 		Assets.init();
+		display = new Display("JLC", 1000, 500);
+		display.getFrame().setIconImage(Assets.icon);
 
 		mouseManager = new MouseManager();
 		display.getFrame().addMouseListener(mouseManager);
@@ -38,6 +40,8 @@ public class WindowThread implements Runnable, ActionListener {
 		ArrayList<UiItem> page1 = new ArrayList<>();
 		ArrayList<UiItem> page_settings = new ArrayList<>();
 		ArrayList<UiItem> page_effects = new ArrayList<>();
+		ArrayList<UiItem> page_faders = new ArrayList<>();
+
 		Button project_open = new Button(0, 0, 40, 110, "Open Project", g) {
 			@Override
 			public void onClick(MouseEvent e) {
@@ -68,6 +72,12 @@ public class WindowThread implements Runnable, ActionListener {
 				Main.getWindowThread().setCurrentPage(2);
 			}
 		};
+		Button faders = new Button(0, 200, 40, 110, "Faders", g) {
+			@Override
+			public void onClick(MouseEvent e) {
+				Main.getWindowThread().setCurrentPage(3);
+			}
+		};
 		Button settings = new Button(0, 432, 40, 110, "Settings", g) {
 			@Override
 			public void onClick(MouseEvent e) {
@@ -82,17 +92,38 @@ public class WindowThread implements Runnable, ActionListener {
 			}
 		};
 
+		VerticalScrollBar master_fader = new VerticalScrollBar(100, 100, g, true) {
+			@Override
+			public void onChange(MouseEvent e) {
+				double percentage = this.getSliderPosPercent();
+				double data = (percentage / 100) * 255;
+				byte[][] temp_dmxData = Main.getDmxData();
+				for (int i = 0; i < Main.getSettings().getUniverseLimit(); i++) {
+					for (int j = 0; j < 512; j++) {
+						temp_dmxData[i][j] = (byte) data;
+					}
+				}
+				Main.setDmxData(temp_dmxData);
+			}
+		};
+		master_fader.setSliderLength(5);
+		master_fader.setSliderPosPercent(((Main.getDmxData()[0][0] - 1) / 255));
+
 		page1.add(project_open);
 		page1.add(project_save);
 		page1.add(project_save_as);
 		page1.add(settings);
 		page1.add(blackout);
 		page1.add(effects);
+		page1.add(faders);
+		page_faders.add(master_fader);
 		page_settings.add(home);
 		page_effects.add(home);
+		page_faders.add(home);
 		items.add(page1);
 		items.add(page_settings);
 		items.add(page_effects);
+		items.add(page_faders);
 	}
 
 

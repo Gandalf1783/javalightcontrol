@@ -17,7 +17,7 @@ public class Main {
 
 	private static byte[][] dmxData = null;
 
-	public static final String VERSION = "DEV-1.7";
+	public static final String VERSION = "DEV-2.0";
 	public static final String NET_VERSION = "DEV-1.1";
 	// Setting up Threads
 	private static ArtNetThread artNetThread = new ArtNetThread();
@@ -44,9 +44,9 @@ public class Main {
 		System.out.println("[JLC] Initialising & Starting Threads...");
 		consoleRunnable.start();
 		artnetRunnable.start();
-		windowRunnable.start();
 		sessionRunnable.start();
 		calculateRunnable.start();
+		windowRunnable.start();
 		System.out.println("[JLC] System started.");
 	}
 

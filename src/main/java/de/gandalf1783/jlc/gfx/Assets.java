@@ -1,29 +1,19 @@
 package de.gandalf1783.jlc.gfx;
 
-import java.awt.*;
 import java.awt.image.BufferedImage;
 
 public class Assets {
 
-	private static final int width = 32, height = 32;
-
-	public static Font font28;
-
-	public static BufferedImage dirt, grass, stone, tree, rock;
-	public static BufferedImage wood;
-	public static BufferedImage[] player_down, player_up, player_left, player_right;
-	public static BufferedImage[] zombie_down, zombie_up, zombie_left, zombie_right;
-	public static BufferedImage[] btn_start;
-	public static BufferedImage inventoryScreen;
 	public static BufferedImage checked_box, unchecked_box, selected_radio_circle, unselected_radio_circle; // Selection Buttons
 	public static BufferedImage[] h_scrollbar, v_scrollbar; // Scrollbars
 	public static BufferedImage btn, btn_hover, btn_press; // Square Button
 	public static BufferedImage arrow_right, arrow_left, arrow_up, arrow_down; //Arrow Buttons
+	public static BufferedImage icon;
 
 	public static void init() {
 
 		//font28 = FontLoader.loadFont("res/fonts/slkscr.ttf", 28);
-
+		icon = ImageLoader.loadImage("ui/icon.png");
 		SpriteSheet horizontalScrollbarSheet = new SpriteSheet(ImageLoader.loadImage("ui/horizontial_scrollbar.png"));
 		SpriteSheet verticalScrollbarSheet = new SpriteSheet(ImageLoader.loadImage("ui/vertical_scrollbar.png"));
 
