@@ -33,3 +33,4 @@ It is compiled using the OpenJDK 13.0.2.
 #### Requested Features:
 > May not be implemented due to bad API's or other issues.
 1. sACN Support
+2. USB-DMX Interfaces Support
