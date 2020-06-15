@@ -17,7 +17,7 @@ public class Main {
 
 	private static byte[][] dmxData = null;
 
-	public static final String VERSION = "BETA-1.0";
+	public static final String VERSION = "BETA-1.1";
 	public static final String NET_VERSION = "DEV-1.1";
 	// Setting up Threads
 	private static ArtNetThread artNetThread = new ArtNetThread();
@@ -82,7 +82,7 @@ public class Main {
 		byte[][] temp_dmxData = new byte[settings.getUniverseLimit()][512];
 		for (int i = 0; i < settings.getUniverseLimit(); i++) {
 			for (int j = 0; j < 512; j++) {
-				temp_dmxData[i][j] = (byte) 255;
+				temp_dmxData[i][j] = (byte) 0;
 			}
 		}
 		setDmxData(temp_dmxData);
