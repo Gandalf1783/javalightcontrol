@@ -5,18 +5,16 @@ import de.gandalf1783.jlc.gfx.Display;
 import de.gandalf1783.jlc.gfx.MouseManager;
 import de.gandalf1783.jlc.main.Main;
 import de.gandalf1783.jlc.uiItems.Button;
+import de.gandalf1783.jlc.uiItems.FaderPage;
 import de.gandalf1783.jlc.uiItems.ToggleButton;
 import de.gandalf1783.jlc.uiItems.UiItem;
-import de.gandalf1783.jlc.uiItems.VerticalScrollBar;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferStrategy;
 import java.util.ArrayList;
 
-public class WindowThread implements Runnable, ActionListener {
+public class WindowThread implements Runnable {
 
 	private static Boolean shouldStop = false;
 
@@ -92,22 +90,7 @@ public class WindowThread implements Runnable, ActionListener {
 			}
 		};
 
-		VerticalScrollBar master_fader = new VerticalScrollBar(100, 100, g, true) {
-			@Override
-			public void onChange(MouseEvent e) {
-				double percentage = this.getSliderPosPercent();
-				double data = (percentage / 100) * 255;
-				byte[][] temp_dmxData = Main.getDmxData();
-				for (int i = 0; i < Main.getSettings().getUniverseLimit(); i++) {
-					for (int j = 0; j < 512; j++) {
-						temp_dmxData[i][j] = (byte) data;
-					}
-				}
-				Main.setDmxData(temp_dmxData);
-			}
-		};
-		master_fader.setSliderLength(5);
-		master_fader.setSliderPosPercent(((Main.getDmxData()[0][0] - 1) / 255));
+		FaderPage fader = new FaderPage(110, 40, g);
 
 		page1.add(project_open);
 		page1.add(project_save);
@@ -116,7 +99,7 @@ public class WindowThread implements Runnable, ActionListener {
 		page1.add(blackout);
 		page1.add(effects);
 		page1.add(faders);
-		page_faders.add(master_fader);
+		page_faders.add(fader);
 		page_settings.add(home);
 		page_effects.add(home);
 		page_faders.add(home);
@@ -245,20 +228,5 @@ public class WindowThread implements Runnable, ActionListener {
 
 	public void setCurrentPage(int page) {
 		currentPage = page;
-	}
-
-	@Override
-	public void actionPerformed(final ActionEvent e) {
-		final String s = e.getActionCommand();
-		if (s.equalsIgnoreCase("Open Project")) {
-			Main.loadProjectGUI();
-		}
-		if (s.equalsIgnoreCase("Save Project")) {
-			Main.saveProject();
-		}
-		if (s.equalsIgnoreCase("Save Project As...")) {
-			Main.saveProjectHandlerGUI();
-		}
-
 	}
 }

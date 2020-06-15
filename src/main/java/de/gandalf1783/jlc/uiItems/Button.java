@@ -34,13 +34,25 @@ public class Button extends UiItem {
     }
 
     @Override
+    public void onClick(MouseEvent e) {
+        click = true;
+        onChange();
+    }
+
+    @Override
     public void tick() {
+
     }
 
     @Override
     public void onMouseRelease(MouseEvent e) {
         if (hovering && Main.getWindowThread().isOnCurrentPage(this)) {
             click = true;
+            this.onClick(e);
         }
+    }
+
+    public void onChange() {
+
     }
 }

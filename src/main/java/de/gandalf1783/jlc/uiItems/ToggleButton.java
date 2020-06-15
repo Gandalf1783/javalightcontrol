@@ -23,7 +23,6 @@ public class ToggleButton extends Button {
             g.drawImage(Assets.btn, x, y, width, height, null);
         }
         g.drawString(text, x + 15, y + 25);
-        g.drawRect(x, y, width, height);
     }
 
     @Override

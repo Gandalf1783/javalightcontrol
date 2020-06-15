@@ -17,7 +17,7 @@ public class Main {
 
 	private static byte[][] dmxData = null;
 
-	public static final String VERSION = "DEV-2.0";
+	public static final String VERSION = "BETA-1.0";
 	public static final String NET_VERSION = "DEV-1.1";
 	// Setting up Threads
 	private static ArtNetThread artNetThread = new ArtNetThread();

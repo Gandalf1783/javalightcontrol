@@ -1,7 +1,5 @@
 package de.gandalf1783.jlc.uiItems;
 
-import de.gandalf1783.jlc.main.Main;
-
 import java.awt.*;
 import java.awt.event.MouseEvent;
 
@@ -37,15 +35,13 @@ public class UiItem {
 
 
     public void onMouseMove(MouseEvent e) {
-        hovering = bounds.contains(e.getX(), e.getY());
+            hovering = bounds.contains(e.getX(), e.getY());
     }
 
     public void onMouseRelease(MouseEvent e) {
     }
 
     public void onMouseClicked(MouseEvent e) {
-        if (hovering && Main.getWindowThread().isOnCurrentPage(this))
-            onClick(e);
     }
 
     public void onMouseDrag(MouseEvent e) {

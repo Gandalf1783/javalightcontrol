@@ -7,13 +7,14 @@ import java.awt.event.MouseEvent;
 
 public class VerticalScrollBar extends ScrollItem {
 
-    private double sliderPos = 0; // In Pixeln!
-    private int sliderLength = 5; // Length in Elements, 1 element = 40 pixel width/height
+    public double sliderPos = 0; // In Pixeln!
+    public int sliderLength = 5; // Length in Elements, 1 element = 40 pixel width/height
     private int x, y;
     private boolean selected = false;
     private boolean inverted = false;
+    private boolean displayPercent = false;
 
-    public VerticalScrollBar(int x, int y, Graphics g, Boolean inverted) {
+    public VerticalScrollBar(int x, int y, Graphics g, Boolean inverted, Boolean displayPercent) {
         super(x, y, g);
         this.x = x;
         this.y = y;
@@ -21,6 +22,7 @@ public class VerticalScrollBar extends ScrollItem {
         this.width = 40;
         this.bounds = new Rectangle(x, y, width, height);
         this.inverted = inverted;
+        this.displayPercent = displayPercent;
     }
 
 
@@ -38,6 +40,9 @@ public class VerticalScrollBar extends ScrollItem {
         length_offset = 40 + (sliderLength * 40);
         g.drawImage(Assets.v_scrollbar[3], x, length_offset + y, 40, 40, null);
         g.drawImage(Assets.v_scrollbar[1], x, (int) sliderPos + y + 40, 40, 40, null);
+        if (displayPercent) {
+            g.drawString(((int) getSliderPosPercent()) + "", x + 4, y + ((sliderLength * 40) / 2));
+        }
     }
 
     @Override
@@ -78,7 +83,6 @@ public class VerticalScrollBar extends ScrollItem {
             d = 100 - d;
         }
         double d1 = (d / 100) * getMaxSliderPos();
-        System.out.println("d1: " + d1);
         if (inverted) {
             d1 = (sliderLength * 40) - d1;
         }
@@ -86,7 +90,7 @@ public class VerticalScrollBar extends ScrollItem {
         checkBounds();
     }
 
-    private void checkBounds() {
+    public void checkBounds() {
         if (sliderPos > getMaxSliderPos()) {
             sliderPos = getMaxSliderPos();
         }
