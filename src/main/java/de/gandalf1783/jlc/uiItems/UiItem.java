@@ -26,7 +26,6 @@ public class UiItem {
     }
 
     public void onClick(MouseEvent e) {
-        this.onClick(e);
     }
 
     public void onDrag(MouseEvent e) {
@@ -41,6 +40,8 @@ public class UiItem {
     }
 
     public void onMouseClicked(MouseEvent e) {
+        if (hovering)
+            onClick(e);
     }
 
     public void onMouseDrag(MouseEvent e) {

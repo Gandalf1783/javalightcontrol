@@ -42,7 +42,7 @@ public class Main {
 	public static void main(String[] args) {
 		System.out.println("[JLC] Starting JLC...");
 		System.out.println("[JLC] Loading Settings");
-		loadSettings();
+		prepareWorkflow();
 		System.out.println("[JLC] Initialising & Starting Threads...");
 		consoleRunnable.start();
 		artnetRunnable.start();
@@ -52,7 +52,7 @@ public class Main {
 		System.out.println("[JLC] System started.");
 	}
 
-	private static void loadSettings() {
+	private static void prepareWorkflow() {
 		Main.getWindowThread().setStatus("Loading JLC Settings...");
 		// Preparing SETTINGS Object, if none is found.
 		project = new Project();
@@ -101,7 +101,7 @@ public class Main {
 
 		if (!Main.getJLCSettings().getProject_path().equals("")) {
 			try {
-				loadSettingsFromFile(Main.getJLCSettings().getProject_path());
+				loadProjectFromFile(Main.getJLCSettings().getProject_path());
 			} catch (IOException e) {
 				System.out.println("[IO EXCEPTION]");
 			}
@@ -111,7 +111,7 @@ public class Main {
 		}
 	}
 
-	public static void loadSettingsFromFile(String path) throws IOException {
+	public static void loadProjectFromFile(String path) throws IOException {
 		Main.getWindowThread().setStatus("Loading Project...");
 		System.out.println("Loading from Path: " + path);
 		FileInputStream fis = new FileInputStream(path);
@@ -135,7 +135,7 @@ public class Main {
 		if (result == JFileChooser.APPROVE_OPTION) {
 			File selectedFile = fileChooser.getSelectedFile();
 			try {
-				loadSettingsFromFile(selectedFile.getAbsolutePath());
+				loadProjectFromFile(selectedFile.getAbsolutePath());
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -219,7 +219,6 @@ public class Main {
 				xml.close();
 				fos.close();
 				jlcSettings.setLatest_save(new Timestamp(System.currentTimeMillis()));
-				loadSettingsFromFile(filePath);
 				saveJLCSettings();
 			} catch (IOException e) {
 				Main.getWindowThread().setStatus("Project could not be saved");
@@ -267,7 +266,6 @@ public class Main {
 			fos.close();
 			Main.getWindowThread().setStatus("Project has been saved.");
 			jlcSettings.setLatest_save(new Timestamp(System.currentTimeMillis()));
-			loadSettingsFromFile(path);
 			saveJLCSettings();
 		} catch (IOException e) {
 			Main.getWindowThread().setStatus("Error while saving Project");

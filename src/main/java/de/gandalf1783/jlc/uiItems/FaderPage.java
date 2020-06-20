@@ -20,7 +20,7 @@ public class FaderPage extends UiItem {
         int channels = 512;
         Button next = new Button(x + 110, y - 40, 40, 110, "Next ->", g) {
             @Override
-            public void onChange() {
+            public void onClick(MouseEvent e) {
                 selectedFader++;
                 if (selectedFader > 31)
                     selectedFader = 31;
@@ -29,7 +29,7 @@ public class FaderPage extends UiItem {
         };
         Button previous = new Button(x, y - 40, 40, 110, "<- Prev", g) {
             @Override
-            public void onChange() {
+            public void onClick(MouseEvent e) {
                 selectedFader--;
                 if (selectedFader < 0)
                     selectedFader = 0;
@@ -38,7 +38,7 @@ public class FaderPage extends UiItem {
         };
         Button universeUp = new Button(x + 330, y - 40, 40, 110, "Uni ↑", g) {
             @Override
-            public void onChange() {
+            public void onClick(MouseEvent e) {
                 selectedUni++;
                 if (selectedUni > 1)
                     selectedUni = 1;
@@ -47,7 +47,7 @@ public class FaderPage extends UiItem {
         };
         Button universeDown = new Button(x + 220, y - 40, 40, 110, "Uni ↓", g) {
             @Override
-            public void onChange() {
+            public void onClick(MouseEvent e) {
                 selectedUni--;
                 if (selectedUni < 0)
                     selectedUni = 0;
@@ -105,7 +105,7 @@ public class FaderPage extends UiItem {
         g.setColor(Color.BLUE);
         g.drawString("Universe: " + selectedUni, x + 440, y - 25);
         g.drawString("Page: " + selectedFader + "/" + 31, x + 440, y - 10);
-        g.drawString("Faders " + (selectedFader * 16) + " - " + ((selectedFader * 16) + 16), x + 510, y - 25);
+        g.drawString("Faders " + ((selectedFader * 16) + 1) + " - " + ((selectedFader * 16) + 16), x + 510, y - 25);
         g.setColor(Color.BLACK);
     }
 
@@ -147,7 +147,7 @@ public class FaderPage extends UiItem {
             }
         }
         for (Button b : navigation) {
-            if (b.bounds.contains(e.getX(), e.getY())) {
+            if (b.hovering) {
                 b.onMouseClicked(e);
             }
         }
