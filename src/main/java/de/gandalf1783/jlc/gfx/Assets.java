@@ -9,6 +9,8 @@ public class Assets {
 	public static BufferedImage btn, btn_hover, btn_press; // Square Button
 	public static BufferedImage arrow_right, arrow_left, arrow_up, arrow_down; //Arrow Buttons
 	public static BufferedImage icon;
+	public static BufferedImage[] dropdown_round;
+
 
 	public static void init() {
 
@@ -16,7 +18,7 @@ public class Assets {
 		icon = ImageLoader.loadImage("ui/icon.png");
 		SpriteSheet horizontalScrollbarSheet = new SpriteSheet(ImageLoader.loadImage("ui/horizontial_scrollbar.png"));
 		SpriteSheet verticalScrollbarSheet = new SpriteSheet(ImageLoader.loadImage("ui/vertical_scrollbar.png"));
-
+		SpriteSheet dropdownRoundSheet = new SpriteSheet(ImageLoader.loadImage("ui/rounded_dropdown_dropped.png"));
 
 		checked_box = ImageLoader.loadImage("ui/checked_box.png");
 		unchecked_box = ImageLoader.loadImage("ui/unchecked_box.png");
@@ -43,6 +45,12 @@ public class Assets {
 		btn = ImageLoader.loadImage("ui/square_button_normal.png");
 		btn_hover = ImageLoader.loadImage("ui/square_button_hover.png");
 		btn_press = ImageLoader.loadImage("ui/square_button_mouse_down.png");
+
+
+		dropdown_round = new BufferedImage[3];
+		dropdown_round[0] = dropdownRoundSheet.crop(0, 0, 90, 30);
+		dropdown_round[1] = dropdownRoundSheet.crop(0, 30, 90, 30);
+		dropdown_round[2] = dropdownRoundSheet.crop(0, 60, 90, 30);
 
 	}
 

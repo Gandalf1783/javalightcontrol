@@ -24,6 +24,7 @@ public class WindowThread implements Runnable {
 	ArrayList<ArrayList<UiItem>> items = new ArrayList<ArrayList<UiItem>>(4);
 	private MouseManager mouseManager;
 	private int currentPage = 0;
+	private String status = "Booting...";
 
 	private void init() {
 		Assets.init();
@@ -39,6 +40,7 @@ public class WindowThread implements Runnable {
 		ArrayList<UiItem> page_settings = new ArrayList<>();
 		ArrayList<UiItem> page_effects = new ArrayList<>();
 		ArrayList<UiItem> page_faders = new ArrayList<>();
+		ArrayList<UiItem> page_session = new ArrayList<>();
 
 		Button project_open = new Button(0, 0, 40, 110, "Open Project", g) {
 			@Override
@@ -85,8 +87,20 @@ public class WindowThread implements Runnable {
 		Button home = new Button(0, 0, 40, 110, "Home", g) {
 			@Override
 			public void onClick(MouseEvent e) {
-
 				Main.getWindowThread().setCurrentPage(0);
+			}
+		};
+		Button backToSettings = new Button(0, 0, 40, 110, "<- Settings", g) {
+			@Override
+			public void onClick(MouseEvent e) {
+
+				Main.getWindowThread().setCurrentPage(1);
+			}
+		};
+		Button session = new Button(0, 40, 40, 110, "Sessions", g) {
+			@Override
+			public void onClick(MouseEvent e) {
+				Main.getWindowThread().setCurrentPage(4);
 			}
 		};
 
@@ -99,14 +113,20 @@ public class WindowThread implements Runnable {
 		page1.add(blackout);
 		page1.add(effects);
 		page1.add(faders);
+
 		page_faders.add(fader);
 		page_settings.add(home);
+		page_settings.add(session);
 		page_effects.add(home);
+
 		page_faders.add(home);
+		page_session.add(backToSettings);
+
 		items.add(page1);
 		items.add(page_settings);
 		items.add(page_effects);
 		items.add(page_faders);
+		items.add(page_session);
 	}
 
 
@@ -154,37 +174,27 @@ public class WindowThread implements Runnable {
 
 	}
 
-
 	public void onMouseMove(MouseEvent e) {
-		for (ArrayList<UiItem> arrayList : items) {
-			for (UiItem u : arrayList) {
-				u.onMouseMove(e);
-			}
+		for (UiItem item : items.get(currentPage)) {
+			item.onMouseMove(e);
 		}
 	}
 
 	public void onMouseRelease(MouseEvent e) {
-		for (ArrayList<UiItem> arrayList : items) {
-			for (UiItem u : arrayList) {
-				u.onMouseRelease(e);
-			}
+		for (UiItem item : items.get(currentPage)) {
+			item.onMouseRelease(e);
 		}
 	}
 
 	public void onMouseClicked(MouseEvent e) {
-		for (ArrayList<UiItem> arrayList : items) {
-			for (UiItem u : arrayList) {
-				u.onMouseClicked(e);
-			}
+		for (UiItem item : items.get(currentPage)) {
+			item.onMouseClicked(e);
 		}
-
 	}
 
 	public void onMouseDragged(MouseEvent e) {
-		for (ArrayList<UiItem> arrayList : items) {
-			for (UiItem u : arrayList) {
-				u.onDrag(e);
-			}
+		for (UiItem item : items.get(currentPage)) {
+			item.onMouseDrag(e);
 		}
 	}
 
@@ -199,12 +209,12 @@ public class WindowThread implements Runnable {
 		g.clearRect(0, 0, 1000, 500);
 		//Draw Here!
 
-
 		for (UiItem item : items.get(currentPage)) {
 			item.tick();
 			item.render(g);
 		}
-
+		g.setColor(Color.cyan);
+		g.drawString(status, 120, 455);
 		//End Drawing!
 		bs.show();
 		g.dispose();
@@ -228,5 +238,9 @@ public class WindowThread implements Runnable {
 
 	public void setCurrentPage(int page) {
 		currentPage = page;
+	}
+
+	public void setStatus(String s) {
+		this.status = s;
 	}
 }

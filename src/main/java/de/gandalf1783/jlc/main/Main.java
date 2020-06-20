@@ -1,7 +1,7 @@
 package de.gandalf1783.jlc.main;
 
 import de.gandalf1783.jlc.preferences.JLCSettings;
-import de.gandalf1783.jlc.preferences.Settings;
+import de.gandalf1783.jlc.preferences.Project;
 import de.gandalf1783.jlc.preferences.UniverseOut;
 import de.gandalf1783.jlc.threads.*;
 
@@ -12,14 +12,16 @@ import java.beans.ExceptionListener;
 import java.beans.XMLDecoder;
 import java.beans.XMLEncoder;
 import java.io.*;
+import java.sql.Timestamp;
 
 public class Main {
 
 	private static byte[][] dmxData = null;
 
-	public static final String VERSION = "BETA-1.1";
+	public static final String VERSION = "BETA-1.2.3";
 	public static final String NET_VERSION = "DEV-1.1";
 	// Setting up Threads
+
 	private static ArtNetThread artNetThread = new ArtNetThread();
 	private static WindowThread windowThread = new WindowThread();
 	private static ConsoleThread consoleThread = new ConsoleThread();
@@ -33,7 +35,7 @@ public class Main {
 	private static Thread calculateRunnable = new Thread(calculateThread);
 	private static Thread sessionRunnable = new Thread(sessionThread);
 
-	private static Settings settings;
+	private static Project project;
 	private static JLCSettings jlcSettings;
 	private static Boolean sessionMode = false;
 
@@ -51,8 +53,9 @@ public class Main {
 	}
 
 	private static void loadSettings() {
+		Main.getWindowThread().setStatus("Loading JLC Settings...");
 		// Preparing SETTINGS Object, if none is found.
-		settings = new Settings();
+		project = new Project();
 		String[] ip = {"127.0.0.1", "192.168.178.255"};
 
 		// Setting Outputs for ArtNet
@@ -64,23 +67,29 @@ public class Main {
 		UniverseOut[] uniArray = {uni0, uni1};
 
 		// Setting the Universes into settings
-		settings.setUniverseOut(uniArray);
+		project.setUniverseOut(uniArray);
 		// applying settings
-		setSettings(settings);
+		setProject(project);
 
 		// Preparing JLCSETTINGS Object, if none is found.
 		jlcSettings = new JLCSettings();
 
 		jlcSettings.setProject_path("");
 		jlcSettings.setVersion(Main.getVersion());
-		// jlcSettings.setSystemUUID(UUID.randomUUID());
 		loadJLCSettings();
+
+		if (!jlcSettings.getVersion().equalsIgnoreCase(Main.getVersion())) {
+			System.out.println();
+			Utils.displayPopup("Warning", "You seem to updated JLC. Please backup everything before continuing.", 500, 100);
+			jlcSettings.setVersion(Main.getVersion());
+		}
+
 		saveJLCSettings();
 
 		// creating empty dmxData (with max-universes supported and 512 channels per
 		// universe)
-		byte[][] temp_dmxData = new byte[settings.getUniverseLimit()][512];
-		for (int i = 0; i < settings.getUniverseLimit(); i++) {
+		byte[][] temp_dmxData = new byte[project.getUniverseLimit()][512];
+		for (int i = 0; i < project.getUniverseLimit(); i++) {
 			for (int j = 0; j < 512; j++) {
 				temp_dmxData[i][j] = (byte) 0;
 			}
@@ -94,33 +103,32 @@ public class Main {
 			try {
 				loadSettingsFromFile(Main.getJLCSettings().getProject_path());
 			} catch (IOException e) {
-				e.printStackTrace();
+				System.out.println("[IO EXCEPTION]");
 			}
 		} else {
+			Main.getWindowThread().setStatus("No recent project was found.");
 			System.out.println("[JLC] No recent project found.");
 		}
-
-		System.out.println("Setting up Effects...");
-
 	}
 
 	public static void loadSettingsFromFile(String path) throws IOException {
+		Main.getWindowThread().setStatus("Loading Project...");
 		System.out.println("Loading from Path: " + path);
 		FileInputStream fis = new FileInputStream(path);
 		XMLDecoder xml = new XMLDecoder(fis);
-		Settings temp_settings;
-		temp_settings = (Settings) xml.readObject();
+		Project temp_project;
+		temp_project = (Project) xml.readObject();
 		xml.close();
-		Main.setSettings(temp_settings);
-		if (Main.getSettings().getDmxData() != null) {
-			Main.dmxData = Main.getSettings().getDmxData();
+		Main.setProject(temp_project);
+		if (Main.getProject().getDmxData() != null) {
+			Main.dmxData = Main.getProject().getDmxData();
 		}
 		System.out.println("Loaded.");
+		Main.getWindowThread().setStatus("Project \"" + Main.getProject().getProjectName() + "\" loaded.");
 	}
 
 	public static void loadProjectGUI() {
 		JFrame parentFrame = new JFrame();
-
 		JFileChooser fileChooser = new JFileChooser();
 		fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
 		int result = fileChooser.showOpenDialog(parentFrame);
@@ -132,6 +140,7 @@ public class Main {
 				e.printStackTrace();
 			}
 		} else {
+			Main.getWindowThread().setStatus("Could not load the Project.");
 			Utils.displayPopup("Opening Project", "Could not load the Project.");
 			System.out.println("[ERROR] No file specified.");
 		}
@@ -139,11 +148,10 @@ public class Main {
 	}
 
 	public static void shutdown() {
+		Main.getWindowThread().setStatus("Shutting down...");
 		SessionThread.destroySession();
 		System.out.println("[JLC] Terminating Threads...");
-		windowRunnable.interrupt();
 		calculateRunnable.interrupt();
-		windowRunnable.interrupt();
 		sessionRunnable.interrupt();
 		saveProject();
 		saveJLCSettings();
@@ -155,14 +163,13 @@ public class Main {
 		}
 
 		Main.setDmxData(temp_dmxData);
-
 		artnetRunnable.interrupt();
 		System.out.println("[JLC] Program shutdown");
 		System.exit(0);
 	}
 
 	public static void setDmxByte(byte value, int universe, int address) {
-		if (!(universe > settings.getUniverseLimit()) && !(universe < 0)) {
+		if (!(universe > project.getUniverseLimit()) && !(universe < 0)) {
 			if (address <= 512 && !(address < 0)) {
 				dmxData[universe][address] = value;
 			} else {
@@ -199,7 +206,7 @@ public class Main {
 			System.out.println("[PROJECT] " + filePath);
 
 			try {
-				Main.getSettings().setDmxData(dmxData);
+				Main.getProject().setDmxData(dmxData);
 				Main.getJLCSettings().setProject_path(filePath);
 				FileOutputStream fos = new FileOutputStream(filePath);
 				XMLEncoder xml = new XMLEncoder(fos);
@@ -208,17 +215,20 @@ public class Main {
 						System.out.println("Exception! :" + e.toString());
 					}
 				});
-				xml.writeObject(getSettings());
+				xml.writeObject(getProject());
 				xml.close();
 				fos.close();
-
+				jlcSettings.setLatest_save(new Timestamp(System.currentTimeMillis()));
 				loadSettingsFromFile(filePath);
+				saveJLCSettings();
 			} catch (IOException e) {
+				Main.getWindowThread().setStatus("Project could not be saved");
 				System.out.println("Project could not be saved: " + e.getMessage());
 				Main.getJLCSettings().setProject_path("");
 				return null;
 			}
 		} else {
+			Main.getWindowThread().setStatus("Project could not be saved");
 			Utils.displayPopup("Saving Error", "Could not save the Project.");
 			System.out.println("[ERROR] Could not save!");
 		}
@@ -226,15 +236,16 @@ public class Main {
 	}
 
 	private static void saveProjectHandler() {
-		String projectname = Main.getSettings().getProjectName();
+		Main.getWindowThread().setStatus("Saving Project...");
 		System.out.println("Saving Project...");
+		String projectname = Main.getProject().getProjectName();
 		if (projectname == null || projectname.equalsIgnoreCase("")) {
 			projectname = "last-project";
 		}
 		if (projectname.contains("\\s+")) {
 			projectname.replace("\\s+", "-");
 		}
-		Main.getSettings().setDmxData(dmxData);
+		Main.getProject().setDmxData(dmxData);
 
 		try {
 			String path = System.getProperty("user.dir");
@@ -251,11 +262,15 @@ public class Main {
 					System.out.println("Exception! :" + e.toString());
 				}
 			});
-			xml.writeObject(getSettings());
+			xml.writeObject(getProject());
 			xml.close();
 			fos.close();
-
+			Main.getWindowThread().setStatus("Project has been saved.");
+			jlcSettings.setLatest_save(new Timestamp(System.currentTimeMillis()));
+			loadSettingsFromFile(path);
+			saveJLCSettings();
 		} catch (IOException e) {
+			Main.getWindowThread().setStatus("Error while saving Project");
 			System.out.println("Project could not be saved: " + e.getMessage());
 			return;
 		}
@@ -292,8 +307,8 @@ public class Main {
 			xml.close();
 			fis.close();
 			setJLCSettings(temp_settings);
-			if (Main.getSettings().getDmxData() != null) {
-				Main.dmxData = Main.getSettings().getDmxData();
+			if (Main.getProject().getDmxData() != null) {
+				Main.dmxData = Main.getProject().getDmxData();
 			}
 			System.out.println("Loaded.");
 		} catch (FileNotFoundException e) {
@@ -326,12 +341,12 @@ public class Main {
 		Main.dmxData = dmxData;
 	}
 
-	public static Settings getSettings() {
-		return settings;
+	public static Project getProject() {
+		return project;
 	}
 
-	public static void setSettings(Settings settings) {
-		Main.settings = settings;
+	public static void setProject(Project project) {
+		Main.project = project;
 	}
 
 	public static String getVersion() {

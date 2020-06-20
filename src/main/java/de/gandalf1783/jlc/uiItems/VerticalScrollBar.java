@@ -100,15 +100,16 @@ public class VerticalScrollBar extends ScrollItem {
     }
 
     @Override
-    public void onClick(MouseEvent e) {
+    public void onMouseClicked(MouseEvent e) {
+        if (!hovering)
+            return;
         sliderPos = e.getY() - y - 60;
         checkBounds();
         selected = true;
-        onChange(e);
+        onClick(e);
     }
 
-    public void onChange(MouseEvent e) {
-
+    public void onClick(MouseEvent e) {
     }
 
     @Override

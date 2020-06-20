@@ -31,7 +31,7 @@ public class ServerListener extends Listener {
             }
             if(packet.command.equalsIgnoreCase("SAVED-REQUESTING-NET")) {
                 ObjectPacket objectPacket = new ObjectPacket();
-                objectPacket.object = Main.getSettings();
+                objectPacket.object = Main.getProject();
                 objectPacket.command = "ENABLE-SESSIONMODE";
             }
             if(packet.command.equalsIgnoreCase("DONE")) {

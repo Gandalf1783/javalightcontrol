@@ -37,7 +37,7 @@ public class ConsoleThread implements Runnable {
 			String[] args = cmd.split("\\s+");
 			if (args.length == 2) {
 				if (args[1].equalsIgnoreCase("name")) {
-					System.out.println("Project is named \"" + Main.getSettings().getProjectName() + "\"");
+					System.out.println("Project is named \"" + Main.getProject().getProjectName() + "\"");
 				}
 				if(args[1].equalsIgnoreCase("path")) {
 					if(Main.getJLCSettings().getProject_path() != null) {
@@ -56,7 +56,7 @@ public class ConsoleThread implements Runnable {
 					}
 					String name = sb.toString();
 					System.out.println("Project will be named \"" + name + "\"");
-					Main.getSettings().setProjectName(name);
+					Main.getProject().setProjectName(name);
 				}
 			}
 		}
@@ -98,7 +98,7 @@ public class ConsoleThread implements Runnable {
 		if (cmd.equalsIgnoreCase("test")) {
 			UniverseOut uout = new UniverseOut();
 			UniverseOut[] uarray = {uout, uout};
-			Main.getSettings().setUniverseOut(uarray);
+			Main.getProject().setUniverseOut(uarray);
 		}
 	}
 

@@ -33,7 +33,6 @@ public class UiItem {
         this.onDrag(e);
     }
 
-
     public void onMouseMove(MouseEvent e) {
             hovering = bounds.contains(e.getX(), e.getY());
     }

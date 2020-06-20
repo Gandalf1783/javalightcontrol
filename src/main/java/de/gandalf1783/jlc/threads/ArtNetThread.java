@@ -47,19 +47,19 @@ public class ArtNetThread implements Runnable {
 	}
 
 	private void init() {
-		System.out.println("[ArtNet] Thread started.");
-		artnet = new ArtNetClient();
-		artnet.start();
-		artNetServer = artnet.getArtNetServer();
+        System.out.println("[ArtNet] Thread started.");
+        artnet = new ArtNetClient();
+        artnet.start();
+        artNetServer = artnet.getArtNetServer();
 
-		byte[][] temp_dmxData = new byte[Main.getSettings().getUniverseLimit()][512];
-		for (int i = 0; i < Main.getSettings().getUniverseLimit(); i++) {
-			for (int j = 0; j < 512; j++) {
-				temp_dmxData[i][j] = (byte) 0;
-			}
-		}
-		dmxBlackout = temp_dmxData;
-	}
+        byte[][] temp_dmxData = new byte[Main.getProject().getUniverseLimit()][512];
+        for (int i = 0; i < Main.getProject().getUniverseLimit(); i++) {
+            for (int j = 0; j < 512; j++) {
+                temp_dmxData[i][j] = (byte) 0;
+            }
+        }
+        dmxBlackout = temp_dmxData;
+    }
 
 	@Override
 	public void run() {
@@ -85,21 +85,21 @@ public class ArtNetThread implements Runnable {
 					fps = 0;
 				}
 
-				if(!Main.getSessionMode()){
-					// Get all aditional unicast ip's and send to them:
-					for (int i = 0; i < Main.getSettings().getUniverseOut().length; i++) {
-						if (Main.getSettings().getUniverseOut()[i] != null) {
-							UniverseOut uout = Main.getSettings().getUniverseOut()[i];
-							for (int j = 0; j < uout.getIP().length; j++) {
-								if (uout.getIP(j) != null) {
-									if (blackout) {
-										artnet.unicastDmx(uout.getIP(j), Main.getSettings().getSubNet(), i,
-												dmxBlackout[i]);
-									} else {
-										artnet.unicastDmx(uout.getIP(j), Main.getSettings().getSubNet(), i,
-												Main.getUniverseData(i));
-									}
-								}
+				if(!Main.getSessionMode()) {
+                    // Get all aditional unicast ip's and send to them:
+                    for (int i = 0; i < Main.getProject().getUniverseOut().length; i++) {
+                        if (Main.getProject().getUniverseOut()[i] != null) {
+                            UniverseOut uout = Main.getProject().getUniverseOut()[i];
+                            for (int j = 0; j < uout.getIP().length; j++) {
+                                if (uout.getIP(j) != null) {
+                                    if (blackout) {
+                                        artnet.unicastDmx(uout.getIP(j), Main.getProject().getSubNet(), i,
+                                                dmxBlackout[i]);
+                                    } else {
+                                        artnet.unicastDmx(uout.getIP(j), Main.getProject().getSubNet(), i,
+                                                Main.getUniverseData(i));
+                                    }
+                                }
 							}
 						}
 					}

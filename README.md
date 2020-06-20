@@ -7,7 +7,7 @@ It is using the ArtNet4J (ArtNetForJava) Library, aswell as the Kryonet Library 
 
 **Latest Official Released Version**: BETA-1.0 (see the releases page!)
 
-**Latest Pushed Version**: 1.3-DEV (MAIN); DEV-1.1 (NET)
+**Latest Pushed Version**: BETA-1.2.3 (MAIN); DEV-1.1 (NET)
 
 It is compiled using the OpenJDK 13.0.2. 
 

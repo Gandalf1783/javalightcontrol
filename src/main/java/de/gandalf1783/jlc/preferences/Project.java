@@ -2,8 +2,8 @@ package de.gandalf1783.jlc.preferences;
 
 import java.io.Serializable;
 
-public class Settings implements Serializable {
-	
+public class Project implements Serializable {
+
 	/**
 	 *
 	 */
@@ -20,14 +20,17 @@ public class Settings implements Serializable {
 	private UniverseOut[] universeOut = new UniverseOut[unicastLimit];
 	private byte[][] dmxData = null;
 
-	public Settings() {}
+	public Project() {
+	}
 
 	public int getSubNet() {
 		return subNet;
 	}
+
 	public String getProjectName() {
 		return projectName;
 	}
+
 	public void setProjectName(String projectName) {
 		this.projectName = projectName;
 	}

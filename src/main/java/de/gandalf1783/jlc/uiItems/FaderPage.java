@@ -16,54 +16,44 @@ public class FaderPage extends UiItem {
 
     public FaderPage(int x, int y, Graphics g) {
         super(x, y, g);
-        System.out.println("FADER 1 - " + selectedFader);
-        int universes = Main.getSettings().getUniverseLimit() + 1;
+        int universes = Main.getProject().getUniverseLimit() + 1;
         int channels = 512;
-        System.out.println("FADER 2 - " + selectedFader);
         Button next = new Button(x + 110, y - 40, 40, 110, "Next ->", g) {
             @Override
             public void onChange() {
-                System.out.println("PAGE +");
                 selectedFader++;
                 if (selectedFader > 31)
                     selectedFader = 31;
                 setVisibleFader(selectedFader, selectedUni);
             }
         };
-        System.out.println("FADER 3 - " + selectedFader);
         Button previous = new Button(x, y - 40, 40, 110, "<- Prev", g) {
             @Override
             public void onChange() {
-                System.out.println("PAGE -");
                 selectedFader--;
                 if (selectedFader < 0)
                     selectedFader = 0;
                 setVisibleFader(selectedFader, selectedUni);
             }
         };
-        System.out.println("FADER 4 - " + selectedFader);
         Button universeUp = new Button(x + 330, y - 40, 40, 110, "Uni ↑", g) {
             @Override
             public void onChange() {
-                System.out.println("UNI +");
                 selectedUni++;
                 if (selectedUni > 1)
                     selectedUni = 1;
                 setVisibleFader(selectedFader, selectedUni);
             }
         };
-        System.out.println("FADER 5 - " + selectedFader);
         Button universeDown = new Button(x + 220, y - 40, 40, 110, "Uni ↓", g) {
             @Override
             public void onChange() {
-                System.out.println("UNI -");
                 selectedUni--;
                 if (selectedUni < 0)
                     selectedUni = 0;
                 setVisibleFader(selectedFader, selectedUni);
             }
         };
-        System.out.println("FADER 6 - " + selectedFader);
         int counter = 0;
         for (int u = 0; u < universes; u++) {
             for (int c = 0; c < channels; c++) {
@@ -73,7 +63,7 @@ public class FaderPage extends UiItem {
                 int finalC = c;
                 VerticalScrollBar vsb = new VerticalScrollBar(x + (counter * 40) + (counter * 3), y, g, true, true) {
                     @Override
-                    public void onChange(MouseEvent e) {
+                    public void onClick(MouseEvent e) {
                         double percentage = this.getSliderPosPercent();
                         double data = (percentage / 100) * 255;
                         Main.setDmxByte((byte) data, finalU, finalC);
@@ -86,14 +76,11 @@ public class FaderPage extends UiItem {
                 counter++;
             }
         }
-        System.out.println("FADER 7 - " + selectedFader);
         navigation.add(previous);
         navigation.add(next);
         navigation.add(universeUp);
         navigation.add(universeDown);
-        System.out.println("FADER 8 - " + selectedFader);
         setVisibleFader(0, 0);
-        System.out.println("FADER 9 - " + selectedFader);
     }
 
     private void setVisibleFader(int i, int u) {
@@ -130,8 +117,12 @@ public class FaderPage extends UiItem {
 
     @Override
     public void onMouseMove(MouseEvent e) {
-        for (VerticalScrollBar fader : faders)
+        for (VerticalScrollBar fader : visibleFader) {
             fader.onMouseMove(e);
+        }
+        for (Button b : navigation) {
+            b.onMouseMove(e);
+        }
     }
 
     @Override
@@ -146,17 +137,18 @@ public class FaderPage extends UiItem {
 
     @Override
     public void onMouseRelease(MouseEvent e) {
-        if (Main.getWindowThread().isOnCurrentPage(this)) {
-            int count = 0;
-            for (VerticalScrollBar fader : visibleFader) {
-                if (fader.hovering) {
-                    fader.onClick(e);
-                }
+    }
+
+    @Override
+    public void onMouseClicked(MouseEvent e) {
+        for (VerticalScrollBar fader : visibleFader) {
+            if (fader.hovering) {
+                fader.onMouseClicked(e);
             }
-            for (Button b : navigation) {
-                if (b.bounds.contains(e.getX(), e.getY())) {
-                    b.onClick(e);
-                }
+        }
+        for (Button b : navigation) {
+            if (b.bounds.contains(e.getX(), e.getY())) {
+                b.onMouseClicked(e);
             }
         }
     }

@@ -3,7 +3,6 @@ package de.gandalf1783.jlc.uiItems;
 import de.gandalf1783.jlc.gfx.Assets;
 
 import java.awt.*;
-import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 public class HorizontalScrollBar extends ScrollItem {
@@ -11,9 +10,6 @@ public class HorizontalScrollBar extends ScrollItem {
     private double sliderPos = 0; // In Pixeln!
     private int sliderLength = 5; // Length in Elements, 1 element = 40 pixel width/height
     private int x, y;
-    private boolean selected = false;
-    private MouseEvent e;
-    private MouseAdapter mouseAdapter;
 
     public HorizontalScrollBar(int x, int y, Graphics g) {
         super(x, y, g);
@@ -83,20 +79,16 @@ public class HorizontalScrollBar extends ScrollItem {
 
     @Override
     public void onClick(MouseEvent e) {
-        sliderPos = e.getX() - x - 60;
-        checkBounds();
-        selected = true;
-        onChange(e);
-    }
-
-    public void onChange(MouseEvent e) {
 
     }
 
     @Override
-    public void onMouseRelease(MouseEvent event) {
-        selected = false;
+    public void onMouseClicked(MouseEvent e) {
+        if (!hovering)
+            return;
+        sliderPos = e.getX() - x - 60;
+        checkBounds();
+        onClick(e);
     }
-
 
 }
