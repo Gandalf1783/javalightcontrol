@@ -56,15 +56,20 @@ public class Main {
 		Main.getWindowThread().setStatus("Loading JLC Settings...");
 		// Preparing SETTINGS Object, if none is found.
 		project = new Project();
-		String[] ip = {"127.0.0.1", "192.168.178.255"};
+
 
 		// Setting Outputs for ArtNet
 		UniverseOut uni0 = new UniverseOut();
 		UniverseOut uni1 = new UniverseOut();
-
-		uni0.setIP(ip);
-		uni1.setIP(ip);
-		UniverseOut[] uniArray = {uni0, uni1};
+		UniverseOut uni2 = new UniverseOut();
+		UniverseOut uni3 = new UniverseOut();
+		UniverseOut uni4 = new UniverseOut();
+		uni0.addAddress("127.0.0.1");
+		uni1.addAddress("127.0.0.1");
+		uni2.addAddress("127.0.0.1");
+		uni3.addAddress("127.0.0.1");
+		uni4.addAddress("127.0.0.1");
+		UniverseOut[] uniArray = {uni0, uni1, uni2, uni3, uni4};
 
 		// Setting the Universes into settings
 		project.setUniverseOut(uniArray);
@@ -81,8 +86,10 @@ public class Main {
 		if (!jlcSettings.getVersion().equalsIgnoreCase(Main.getVersion())) {
 			System.out.println();
 			Utils.displayPopup("Warning", "You seem to updated JLC. Please backup everything before continuing.", 500, 100);
+			Utils.displayPopup("WARNING", "THIS VERSION OF JLC IS INCOMPATIBLE WITH OLDER PROJECT FILES! DO NOT USE THEM!", 500, 100);
 			jlcSettings.setVersion(Main.getVersion());
 		}
+
 
 		saveJLCSettings();
 
@@ -169,13 +176,15 @@ public class Main {
 	}
 
 	public static void setDmxByte(byte value, int universe, int address) {
-		if (!(universe > project.getUniverseLimit()) && !(universe < 0)) {
+		if (universe < project.getUniverseLimit() && !(universe < 0)) {
 			if (address <= 512 && !(address < 0)) {
 				dmxData[universe][address] = value;
 			} else {
-				System.out.println("{setDmxByte} Address \"" + address + "\" to high/low!");
+				Main.getWindowThread().setStatus("{setDmxByte} : The address \"+" + address + "\" you try to set is too high/low!");
+				System.out.println("{setDmxByte} Address \"" + address + "\" too high/low!");
 			}
 		} else {
+			Main.getWindowThread().setStatus("{setDmxByte} : The Universe you try to set is too high/low!");
 			System.out.println("{setDmxByte} Universe too high/low!");
 		}
 	}

@@ -4,6 +4,7 @@ import de.gandalf1783.jlc.gfx.Assets;
 import de.gandalf1783.jlc.gfx.Display;
 import de.gandalf1783.jlc.gfx.MouseManager;
 import de.gandalf1783.jlc.main.Main;
+import de.gandalf1783.jlc.preferences.UniverseOut;
 import de.gandalf1783.jlc.uiItems.Button;
 import de.gandalf1783.jlc.uiItems.FaderPage;
 import de.gandalf1783.jlc.uiItems.ToggleButton;
@@ -12,6 +13,7 @@ import de.gandalf1783.jlc.uiItems.UiItem;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferStrategy;
+import java.net.NetworkInterface;
 import java.util.ArrayList;
 
 public class WindowThread implements Runnable {
@@ -175,8 +177,10 @@ public class WindowThread implements Runnable {
 	}
 
 	public void onMouseMove(MouseEvent e) {
-		for (UiItem item : items.get(currentPage)) {
-			item.onMouseMove(e);
+		if (items.get(currentPage) != null) {
+			for (UiItem item : items.get(currentPage)) {
+				item.onMouseMove(e);
+			}
 		}
 	}
 
@@ -243,4 +247,19 @@ public class WindowThread implements Runnable {
 	public void setStatus(String s) {
 		this.status = s;
 	}
+
+	public void getNetworkInterfaces() {
+
+	}
+
+	public void setNetworkInterface() {
+
+	}
+
+	public void setUniverseOut(NetworkInterface ni, Boolean enabled) {
+		if (enabled) {
+			UniverseOut[] uniOut = Main.getProject().getUniverseOut();
+		}
+	}
+
 }

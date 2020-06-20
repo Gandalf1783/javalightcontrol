@@ -89,17 +89,17 @@ public class ArtNetThread implements Runnable {
                     // Get all aditional unicast ip's and send to them:
                     for (int i = 0; i < Main.getProject().getUniverseOut().length; i++) {
                         if (Main.getProject().getUniverseOut()[i] != null) {
-                            UniverseOut uout = Main.getProject().getUniverseOut()[i];
-                            for (int j = 0; j < uout.getIP().length; j++) {
-                                if (uout.getIP(j) != null) {
-                                    if (blackout) {
-                                        artnet.unicastDmx(uout.getIP(j), Main.getProject().getSubNet(), i,
-                                                dmxBlackout[i]);
-                                    } else {
-                                        artnet.unicastDmx(uout.getIP(j), Main.getProject().getSubNet(), i,
-                                                Main.getUniverseData(i));
-                                    }
-                                }
+							UniverseOut uout = Main.getProject().getUniverseOut()[i];
+							for (int j = 0; j < uout.getAddresses().size(); j++) {
+								if (uout.getAddresses().get(j) != null) {
+									if (blackout) {
+										artnet.unicastDmx(uout.getAddresses().get(j), Main.getProject().getSubNet(), i,
+												dmxBlackout[i]);
+									} else {
+										artnet.unicastDmx(uout.getAddresses().get(j), Main.getProject().getSubNet(), i,
+												Main.getUniverseData(i));
+									}
+								}
 							}
 						}
 					}

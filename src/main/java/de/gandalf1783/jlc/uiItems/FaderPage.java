@@ -40,8 +40,8 @@ public class FaderPage extends UiItem {
             @Override
             public void onClick(MouseEvent e) {
                 selectedUni++;
-                if (selectedUni > 1)
-                    selectedUni = 1;
+                if (!(selectedUni < Main.getProject().getUniverseLimit()))
+                    selectedUni = Main.getProject().getUniverseLimit() - 1;
                 setVisibleFader(selectedFader, selectedUni);
             }
         };
@@ -71,11 +71,16 @@ public class FaderPage extends UiItem {
                         Main.setDmxData(temp_dmxData);
                     }
                 };
-                vsb.setSliderPosPercent(0);
+                if (u < Main.getProject().getUniverseLimit()) {
+                    byte i = Main.getDmxData()[u][c];
+                    int j = i & 0xFF;
+                    vsb.setSliderPosPercent((j * 100) / 255);
+                }
                 faders.add(vsb);
                 counter++;
             }
         }
+        System.out.println(30 / 255);
         navigation.add(previous);
         navigation.add(next);
         navigation.add(universeUp);

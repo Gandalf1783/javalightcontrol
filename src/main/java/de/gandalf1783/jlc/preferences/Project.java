@@ -9,7 +9,7 @@ public class Project implements Serializable {
 	 */
 	private static final long serialVersionUID = -3551438906802569304L;
 
-	private final int universeLimit = 15;
+	private final int universeLimit = 5;
 	private int subNet = 0;
 	private final int effectLimit = 8192;
 
