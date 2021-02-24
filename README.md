@@ -20,16 +20,16 @@ It is compiled using the OpenJDK 13.0.2.
 
 ## Work In Progess:
 
-1. User Interface (Current Focus)
-2. Commandline support (Commands are unstable and not safe to use yet)
-3. Session Support (Multi-User)
+1. Redo Console - Adding Commands, Command Autocomplete via (TAB) Key (Current Focus)
+2. User Interface 
+3. Commandline support (Commands are unstable and not safe to use yet)
+4. Session Support (Multi-User)
 
 ## To Do:
 
 1. Receiving ArtNet
 2. Timecode
 3. Fixture Support
-4. Redo Console - Use JLine & Command Interfaces for easier handling
 
 #### Requested Features:
 > May not be implemented due to bad API's or other issues.
