@@ -64,7 +64,7 @@ public class MouseManager implements MouseListener, MouseMotionListener {
 
 	@Override
 	public void mouseDragged(MouseEvent e) {
-		// TODO Auto-generated method stub
+		Main.getWindowThread().onMouseDragged(e);
 	}
 
 	@Override

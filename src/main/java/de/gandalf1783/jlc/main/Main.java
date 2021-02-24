@@ -22,18 +22,18 @@ public class Main {
 	public static final String NET_VERSION = "DEV-1.1";
 	// Setting up Threads
 
-	private static ArtNetThread artNetThread = new ArtNetThread();
-	private static WindowThread windowThread = new WindowThread();
-	private static ConsoleThread consoleThread = new ConsoleThread();
-	private static CalculateThread calculateThread = new CalculateThread();
-	private static SessionThread sessionThread = new SessionThread();
+	private static final ArtNetThread artNetThread = new ArtNetThread();
+	private static final WindowThread windowThread = new WindowThread();
+	private static final ConsoleThread consoleThread = new ConsoleThread();
+	private static final CalculateThread calculateThread = new CalculateThread();
+	private static final SessionThread sessionThread = new SessionThread();
 
 	// Creating Threads from Runnables
-	private static Thread artnetRunnable = new Thread(artNetThread);
-	private static Thread windowRunnable = new Thread(windowThread);
-	private static Thread consoleRunnable = new Thread(consoleThread);
-	private static Thread calculateRunnable = new Thread(calculateThread);
-	private static Thread sessionRunnable = new Thread(sessionThread);
+	private static final Thread artnetRunnable = new Thread(artNetThread);
+	private static final Thread windowRunnable = new Thread(windowThread);
+	private static final Thread consoleRunnable = new Thread(consoleThread);
+	private static final Thread calculateRunnable = new Thread(calculateThread);
+	private static final Thread sessionRunnable = new Thread(sessionThread);
 
 	private static Project project;
 	private static JLCSettings jlcSettings;
@@ -64,12 +64,8 @@ public class Main {
 		UniverseOut uni2 = new UniverseOut();
 		UniverseOut uni3 = new UniverseOut();
 		UniverseOut uni4 = new UniverseOut();
-		uni0.addAddress("127.0.0.1");
-		uni1.addAddress("127.0.0.1");
-		uni2.addAddress("127.0.0.1");
-		uni3.addAddress("127.0.0.1");
-		uni4.addAddress("127.0.0.1");
-		UniverseOut[] uniArray = {uni0, uni1, uni2, uni3, uni4};
+		uni0.addAddress("192.168.178.255");
+		UniverseOut[] uniArray = {uni0};
 
 		// Setting the Universes into settings
 		project.setUniverseOut(uniArray);

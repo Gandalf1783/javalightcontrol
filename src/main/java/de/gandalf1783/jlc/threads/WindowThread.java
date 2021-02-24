@@ -177,6 +177,8 @@ public class WindowThread implements Runnable {
 	}
 
 	public void onMouseMove(MouseEvent e) {
+		if (!(currentPage <= items.size()))
+			return;
 		if (items.get(currentPage) != null) {
 			for (UiItem item : items.get(currentPage)) {
 				item.onMouseMove(e);
