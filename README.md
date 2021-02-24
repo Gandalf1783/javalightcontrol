@@ -29,6 +29,7 @@ It is compiled using the OpenJDK 13.0.2.
 1. Receiving ArtNet
 2. Timecode
 3. Fixture Support
+4. Redo Console - Use JLine & Command Interfaces for easier handling
 
 #### Requested Features:
 > May not be implemented due to bad API's or other issues.
