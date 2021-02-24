@@ -200,6 +200,7 @@ public class WindowThread implements Runnable {
 
 	public void onMouseDragged(MouseEvent e) {
 		for (UiItem item : items.get(currentPage)) {
+
 			item.onMouseDrag(e);
 		}
 	}

@@ -4,9 +4,10 @@ import java.awt.image.BufferedImage;
 
 public class Animation {
 
-	private int speed, index;
+	private final int speed;
+	private final BufferedImage[] frames;
 	private long lastTime, timer;
-	private BufferedImage[] frames;
+	private int index;
 
 	public Animation(int speed, BufferedImage[] frames) {
 		this.speed = speed;

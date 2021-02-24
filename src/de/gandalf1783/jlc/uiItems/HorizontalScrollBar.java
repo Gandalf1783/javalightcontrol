@@ -9,7 +9,8 @@ public class HorizontalScrollBar extends ScrollItem {
 
     private double sliderPos = 0; // In Pixeln!
     private int sliderLength = 5; // Length in Elements, 1 element = 40 pixel width/height
-    private int x, y;
+    private final int x;
+    private final int y;
 
     public HorizontalScrollBar(int x, int y, Graphics g) {
         super(x, y, g);

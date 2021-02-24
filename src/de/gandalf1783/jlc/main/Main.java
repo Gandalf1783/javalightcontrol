@@ -179,9 +179,6 @@ public class Main {
 				Main.getWindowThread().setStatus("{setDmxByte} : The address \"+" + address + "\" you try to set is too high/low!");
 				System.out.println("{setDmxByte} Address \"" + address + "\" too high/low!");
 			}
-		} else {
-			Main.getWindowThread().setStatus("{setDmxByte} : The Universe you try to set is too high/low!");
-			System.out.println("{setDmxByte} Universe too high/low!");
 		}
 	}
 

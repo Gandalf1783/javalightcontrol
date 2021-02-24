@@ -8,9 +8,9 @@ import java.util.ArrayList;
 
 public class FaderPage extends UiItem {
 
-    private ArrayList<VerticalScrollBar> faders = new ArrayList<>();
+    private final ArrayList<VerticalScrollBar> faders = new ArrayList<>();
     private ArrayList<VerticalScrollBar> visibleFader = new ArrayList<>();
-    private ArrayList<Button> navigation = new ArrayList<>();
+    private final ArrayList<Button> navigation = new ArrayList<>();
     private int selectedFader = 0;
     private int selectedUni = 0;
 
@@ -59,18 +59,7 @@ public class FaderPage extends UiItem {
             for (int c = 0; c < channels; c++) {
                 if (counter == 16)
                     counter = 0;
-                int finalU = u;
-                int finalC = c;
-                VerticalScrollBar vsb = new VerticalScrollBar(x + (counter * 40) + (counter * 3), y, g, true, true) {
-                    @Override
-                    public void onClick(MouseEvent e) {
-                        double percentage = this.getSliderPosPercent();
-                        double data = (percentage / 100) * 255;
-                        Main.setDmxByte((byte) data, finalU, finalC);
-                        byte[][] temp_dmxData = Main.getDmxData();
-                        Main.setDmxData(temp_dmxData);
-                    }
-                };
+                VerticalScrollBar vsb = new VerticalScrollBar(x + (counter * 40) + (counter * 3), y, g, true, true, u, c);
                 if (u < Main.getProject().getUniverseLimit()) {
                     byte i = Main.getDmxData()[u][c];
                     int j = i & 0xFF;
@@ -131,12 +120,6 @@ public class FaderPage extends UiItem {
     }
 
     @Override
-    public void onDrag(MouseEvent e) {
-        for (VerticalScrollBar fader : faders)
-            fader.onDrag(e);
-    }
-
-    @Override
     public void onClick(MouseEvent e) {
     }
 
@@ -154,6 +137,16 @@ public class FaderPage extends UiItem {
         for (Button b : navigation) {
             if (b.hovering) {
                 b.onMouseClicked(e);
+            }
+        }
+    }
+
+    @Override
+    public void onMouseDrag(MouseEvent e) {
+        for (VerticalScrollBar fader : visibleFader) {
+            if (fader.hovering) {
+                fader.onMouseDrag(e);
+                fader.tick();
             }
         }
     }

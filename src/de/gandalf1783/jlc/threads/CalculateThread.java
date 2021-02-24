@@ -5,7 +5,7 @@ import de.gandalf1783.jlc.main.Main;
 
 public class CalculateThread implements Runnable {
 
-	private static Boolean shouldStop = false;
+	private static final Boolean shouldStop = false;
 
 	public static Effect[] calculatingEffects;
 

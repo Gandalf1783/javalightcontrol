@@ -1,6 +1,7 @@
 package de.gandalf1783.jlc.uiItems;
 
 import de.gandalf1783.jlc.gfx.Assets;
+import de.gandalf1783.jlc.main.Main;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;
@@ -9,10 +10,13 @@ public class VerticalScrollBar extends ScrollItem {
 
     public double sliderPos = 0; // In Pixeln!
     public int sliderLength = 5; // Length in Elements, 1 element = 40 pixel width/height
-    private int x, y;
+    private final int x;
+    private final int y;
     private boolean selected = false;
     private boolean inverted = false;
-    private boolean displayPercent = false;
+    private final boolean displayPercent;
+    private final boolean isUniverseChannelSet;
+    private int universe, channel;
 
     public VerticalScrollBar(int x, int y, Graphics g, Boolean inverted, Boolean displayPercent) {
         super(x, y, g);
@@ -23,8 +27,22 @@ public class VerticalScrollBar extends ScrollItem {
         this.bounds = new Rectangle(x, y, width, height);
         this.inverted = inverted;
         this.displayPercent = displayPercent;
+        this.isUniverseChannelSet = false;
     }
 
+    public VerticalScrollBar(int x, int y, Graphics g, Boolean inverted, Boolean displayPercent, int universe, int channel) {
+        super(x, y, g);
+        this.x = x;
+        this.y = y;
+        this.height = (sliderLength + 2) * 40;
+        this.width = 40;
+        this.bounds = new Rectangle(x, y, width, height);
+        this.inverted = inverted;
+        this.displayPercent = displayPercent;
+        this.isUniverseChannelSet = true;
+        this.universe = universe;
+        this.channel = channel;
+    }
 
     @Override
     public void render(Graphics g) {
@@ -47,6 +65,13 @@ public class VerticalScrollBar extends ScrollItem {
 
     @Override
     public void tick() {
+        if (isUniverseChannelSet) {
+            double percentage = this.getSliderPosPercent();
+            double data = (percentage / 100) * 255;
+            Main.setDmxByte((byte) data, universe, channel);
+            byte[][] temp_dmxData = Main.getDmxData();
+            Main.setDmxData(temp_dmxData);
+        }
     }
 
     public int getMaxSliderPos() {
@@ -68,6 +93,7 @@ public class VerticalScrollBar extends ScrollItem {
         }
         this.sliderPos = pos;
         checkBounds();
+
     }
 
     public double getSliderPosPercent() {
@@ -109,12 +135,27 @@ public class VerticalScrollBar extends ScrollItem {
         onClick(e);
     }
 
-    public void onClick(MouseEvent e) {
-    }
-
     @Override
     public void onMouseRelease(MouseEvent event) {
         this.selected = false;
+    }
+
+
+    @Override
+    public void onMouseDrag(MouseEvent e) {
+        if (!hovering)
+            return;
+        sliderPos = e.getY() - y - 60;
+        checkBounds();
+        selected = true;
+    }
+
+    public void refreshDMXValue(int finalU, int finalC) {
+        double percentage = this.getSliderPosPercent();
+        double data = (percentage / 100) * 255;
+        Main.setDmxByte((byte) data, finalU, finalC);
+        byte[][] temp_dmxData = Main.getDmxData();
+        Main.setDmxData(temp_dmxData);
     }
 
     public void setInverted(Boolean b) {

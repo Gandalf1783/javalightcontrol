@@ -28,10 +28,6 @@ public class UiItem {
     public void onClick(MouseEvent e) {
     }
 
-    public void onDrag(MouseEvent e) {
-        this.onDrag(e);
-    }
-
     public void onMouseMove(MouseEvent e) {
             hovering = bounds.contains(e.getX(), e.getY());
     }
@@ -45,7 +41,7 @@ public class UiItem {
     }
 
     public void onMouseDrag(MouseEvent e) {
-        if (hovering)
-            onDrag(e);
+        if (!hovering)
+            return;
     }
 }

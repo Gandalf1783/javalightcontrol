@@ -9,14 +9,14 @@ import java.io.InputStreamReader;
 
 public class ConsoleThread implements Runnable {
 
-	private static Boolean shouldStop = false;
+	private static final Boolean shouldStop = false;
 
 	public static void runCommand(String cmd) {
 		if (cmd.equalsIgnoreCase("shutdown") || cmd.equalsIgnoreCase("exit")) {
 			System.out.println("[CONSOLE] Initiated Shutdown");
 			Main.shutdown();
 		}
-		if(cmd.startsWith("help")) {
+		if (cmd.startsWith("help")) {
 			System.out.println(" -=- HELP -=- ");
 			System.out.println("save - saves this project | With GUI");
 			System.out.println("load - loads last project | With GUI");

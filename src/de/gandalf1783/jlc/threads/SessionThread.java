@@ -5,6 +5,7 @@ import com.esotericsoftware.kryonet.Server;
 import de.gandalf1783.jlc.main.Main;
 import de.gandalf1783.jlc.sessions.Packet;
 import de.gandalf1783.jlc.sessions.ServerListener;
+
 import java.io.IOException;
 
 public class SessionThread implements Runnable {
