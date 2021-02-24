@@ -69,7 +69,6 @@ public class FaderPage extends UiItem {
                 counter++;
             }
         }
-        System.out.println(30 / 255);
         navigation.add(previous);
         navigation.add(next);
         navigation.add(universeUp);

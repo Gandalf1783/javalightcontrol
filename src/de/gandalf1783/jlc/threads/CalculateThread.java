@@ -11,9 +11,18 @@ public class CalculateThread implements Runnable {
 
 	public final static int TARGET_FPS = 30;
 
-	private void init() {
-		calculatingEffects = new Effect[0];
-		System.out.println("[Calculation] Thread started.");
+	public static void addEffect(Effect e) {
+		if (e != null) {
+			Effect[] temp_effects = new Effect[calculatingEffects.length + 1];
+			int i = 0;
+			for (Effect temp : calculatingEffects) {
+				temp_effects[i] = temp;
+				i++;
+			}
+			temp_effects[i] = e;
+			calculatingEffects = temp_effects;
+			CLIUtils.println("LENGTH OF NEW ARRAY IS " + temp_effects.length);
+		}
 	}
 
 	public static Effect[] getCalculatingEffects() {
@@ -27,12 +36,38 @@ public class CalculateThread implements Runnable {
 		}
 		return false;
 	}
+
 	public void calculate(Effect e) {
-		e.setValueNow(e.getValueNow()+ ((e.getValueTarget() / e.getValueBefore()) / e.getFrames()));
+		e.setValueNow(e.getValueNow() + ((e.getValueTarget() / e.getValueBefore()) / e.getFrames()));
 		int frames = e.getFrames();
 		frames--;
 		e.setFrames(frames);
 	}
+
+	private void init() {
+		calculatingEffects = new Effect[0];
+		CLIUtils.println("[Calculation] Thread started.");
+	}
+
+	public static void stopEffect(int index) {
+		Effect[] temp_effect = new Effect[calculatingEffects.length];
+		for (int i = 0; i < temp_effect.length; i++) {
+			if (i != index) {
+				temp_effect[i] = calculatingEffects[i];
+			}
+		}
+		calculatingEffects = temp_effect;
+	}
+
+	public static int getIndex(Effect e) {
+		for (int i = 0; i < calculatingEffects.length; i++) {
+			if (calculatingEffects[i].equals(e)) {
+				return i;
+			}
+		}
+		return 0;
+	}
+
 	@Override
 	public void run() {
 		init();
@@ -69,45 +104,12 @@ public class CalculateThread implements Runnable {
 					}
 					Thread.sleep(timeout);
 				} catch (InterruptedException e1) {
-					System.out.println("CalculateNet Thread: Sleep couldn't be executed due exiting the app");
+					CLIUtils.println("CalculateNet Thread: Sleep couldn't be executed due exiting the app");
 				}
 			}
 
 		}
-		System.out.println("[Calculation] Thread stopped.");
-	}
-
-	public static void stopEffect(int index) {
-		Effect[] temp_effect = new Effect[calculatingEffects.length];
-		for (int i = 0; i < temp_effect.length; i++) {
-			if (i != index) {
-				temp_effect[i] = calculatingEffects[i];
-			}
-		}
-		calculatingEffects = temp_effect;
-	}
-
-	public static int getIndex(Effect e) {
-		for (int i = 0; i < calculatingEffects.length; i++) {
-			if (calculatingEffects[i].equals(e)) {
-				return i;
-			}
-		}
-		return 0;
-	}
-	
-	public static void addEffect(Effect e) {
-		if(e != null) {
-			Effect[] temp_effects = new Effect[calculatingEffects.length+1];
-			int i = 0;
-			for (Effect temp : calculatingEffects) {
-				temp_effects[i] = temp;
-				i++;
-			}
-			temp_effects[i] = e;
-			calculatingEffects = temp_effects;
-			System.out.println("LENGTH OF NEW ARRAY IS "+temp_effects.length);
-		}
+		CLIUtils.println("[Calculation] Thread stopped.");
 	}
 
 }

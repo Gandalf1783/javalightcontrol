@@ -12,6 +12,8 @@
       <element id="extracted-dir" path="$PROJECT_DIR$/../../BACKUP/C/API/minlog-none-1.2.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$PROJECT_DIR$/../../BACKUP/C/API/objenesis-1.2.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$PROJECT_DIR$/../../BACKUP/C/API/reflectasm-1.07.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../../API/jansi-1.17.1.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../../API/jline-3.16.0.jar" path-in-jar="/" />
     </root>
   </artifact>
 </component>

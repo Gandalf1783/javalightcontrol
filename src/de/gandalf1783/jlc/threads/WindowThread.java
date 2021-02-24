@@ -164,7 +164,7 @@ public class WindowThread implements Runnable {
 
 		}
 
-		System.out.println("[Window] Thread stopped.");
+		CLIUtils.println("[Window] Thread stopped.");
 	}
 
 	public static Boolean getShouldStop() {

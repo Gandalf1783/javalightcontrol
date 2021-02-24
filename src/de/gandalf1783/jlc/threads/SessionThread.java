@@ -13,31 +13,6 @@ public class SessionThread implements Runnable {
 	private static Boolean shouldStop = false;
 	private static Server server;
 	private static Boolean isServer = false;
-	private void init() {
-		System.out.println("[Session] Thread started.");
-	}
-	
-	@Override
-	public void run() {
-		init();
-		//while (!shouldStop) {
-			// SESSION IS TO BE ADDED
-
-
-
-			//NOT IMPLEMENTED YET!
-		//}
-		System.out.println("[Session] Thread stopped.");
-	}
-
-	public static Boolean getShouldStop() {
-		return shouldStop;
-	}
-
-	public static void setShouldStop(final Boolean shouldStop) {
-		SessionThread.shouldStop = shouldStop;
-	}
-
 	public static void createSession() {
 		isServer = true;
 		server = new Server();
@@ -48,8 +23,32 @@ public class SessionThread implements Runnable {
 			e.printStackTrace();
 		}
 		server.addListener(new ServerListener());
-		System.out.println("Please make sure that TCP 54555 and UDP 54777 are reachable.");
+		CLIUtils.println("Please make sure that TCP 54555 and UDP 54777 are reachable.");
 		Main.notify("Session has been started.");
+	}
+
+	private void init() {
+		CLIUtils.println("[Session] Thread started.");
+	}
+
+	public static Boolean getShouldStop() {
+		return shouldStop;
+	}
+
+	public static void setShouldStop(final Boolean shouldStop) {
+		SessionThread.shouldStop = shouldStop;
+	}
+
+	@Override
+	public void run() {
+		init();
+		//while (!shouldStop) {
+		// SESSION IS TO BE ADDED
+
+
+		//NOT IMPLEMENTED YET!
+		//}
+		CLIUtils.println("[Session] Thread stopped.");
 	}
 
 	public static void destroySession() {

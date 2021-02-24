@@ -4,6 +4,10 @@ import de.gandalf1783.jlc.preferences.JLCSettings;
 import de.gandalf1783.jlc.preferences.Project;
 import de.gandalf1783.jlc.preferences.UniverseOut;
 import de.gandalf1783.jlc.threads.*;
+import org.jline.reader.LineReader;
+import org.jline.reader.impl.completer.AggregateCompleter;
+import org.jline.reader.impl.completer.ArgumentCompleter;
+import org.jline.terminal.Terminal;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -29,9 +33,22 @@ public class Main {
 	private static final SessionThread sessionThread = new SessionThread();
 
 	// Creating Threads from Runnables
+
+
+	/*
+	 * Classes & Vars for Command Line Interface
+	 */
+	private static Terminal terminal;
+	private static ConsoleThread conRunnable;
+	private static Thread conThread;
+	private static LineReader lineReader;
+	private static AggregateCompleter aggregateCompleter;
+	private static ArgumentCompleter argumentCompleter;
+	private static String consolePrompt;
+
 	private static final Thread artnetRunnable = new Thread(artNetThread);
 	private static final Thread windowRunnable = new Thread(windowThread);
-	private static final Thread consoleRunnable = new Thread(consoleThread);
+	private static Thread consoleRunnable;
 	private static final Thread calculateRunnable = new Thread(calculateThread);
 	private static final Thread sessionRunnable = new Thread(sessionThread);
 
@@ -40,16 +57,23 @@ public class Main {
 	private static Boolean sessionMode = false;
 
 	public static void main(String[] args) {
-		System.out.println("[JLC] Starting JLC...");
-		System.out.println("[JLC] Loading Settings");
+		CLIUtils.println("[JLC] Starting JLC...");
+		CLIUtils.println("[JLC] Loading Settings");
+
 		prepareWorkflow();
-		System.out.println("[JLC] Initialising & Starting Threads...");
+
+		CLIUtils.println("[JLC] Initialising & Starting Threads...");
+
+		conRunnable = new ConsoleThread();
+
+		consoleRunnable = new Thread(conRunnable);
+
 		consoleRunnable.start();
 		artnetRunnable.start();
 		sessionRunnable.start();
 		calculateRunnable.start();
 		windowRunnable.start();
-		System.out.println("[JLC] System started.");
+		CLIUtils.println("[JLC] System started.");
 	}
 
 	private static void prepareWorkflow() {
@@ -60,10 +84,6 @@ public class Main {
 
 		// Setting Outputs for ArtNet
 		UniverseOut uni0 = new UniverseOut();
-		UniverseOut uni1 = new UniverseOut();
-		UniverseOut uni2 = new UniverseOut();
-		UniverseOut uni3 = new UniverseOut();
-		UniverseOut uni4 = new UniverseOut();
 		uni0.addAddress("192.168.178.255");
 		UniverseOut[] uniArray = {uni0};
 
@@ -71,6 +91,7 @@ public class Main {
 		project.setUniverseOut(uniArray);
 		// applying settings
 		setProject(project);
+
 
 		// Preparing JLCSETTINGS Object, if none is found.
 		jlcSettings = new JLCSettings();
@@ -80,7 +101,7 @@ public class Main {
 		loadJLCSettings();
 
 		if (!jlcSettings.getVersion().equalsIgnoreCase(Main.getVersion())) {
-			System.out.println();
+			CLIUtils.println("");
 			Utils.displayPopup("Warning", "You seem to updated JLC. Please backup everything before continuing.", 500, 100);
 			Utils.displayPopup("WARNING", "THIS VERSION OF JLC IS INCOMPATIBLE WITH OLDER PROJECT FILES! DO NOT USE THEM!", 500, 100);
 			jlcSettings.setVersion(Main.getVersion());
@@ -99,24 +120,24 @@ public class Main {
 		}
 		setDmxData(temp_dmxData);
 
-		System.out.println("[JLC] Settings loaded.");
-		System.out.println("Searching for Project-Files");
+		CLIUtils.println("[JLC] Settings loaded.");
+		CLIUtils.println("Searching for Project-Files");
 
 		if (!Main.getJLCSettings().getProject_path().equals("")) {
 			try {
 				loadProjectFromFile(Main.getJLCSettings().getProject_path());
 			} catch (IOException e) {
-				System.out.println("[IO EXCEPTION]");
+				CLIUtils.println("[IO EXCEPTION]");
 			}
 		} else {
 			Main.getWindowThread().setStatus("No recent project was found.");
-			System.out.println("[JLC] No recent project found.");
+			CLIUtils.println("[JLC] No recent project found.");
 		}
 	}
 
 	public static void loadProjectFromFile(String path) throws IOException {
 		Main.getWindowThread().setStatus("Loading Project...");
-		System.out.println("Loading from Path: " + path);
+		CLIUtils.println("Loading from Path: " + path);
 		FileInputStream fis = new FileInputStream(path);
 		XMLDecoder xml = new XMLDecoder(fis);
 		Project temp_project;
@@ -126,7 +147,7 @@ public class Main {
 		if (Main.getProject().getDmxData() != null) {
 			Main.dmxData = Main.getProject().getDmxData();
 		}
-		System.out.println("Loaded.");
+		CLIUtils.println("Loaded.");
 		Main.getWindowThread().setStatus("Project \"" + Main.getProject().getProjectName() + "\" loaded.");
 	}
 
@@ -145,7 +166,7 @@ public class Main {
 		} else {
 			Main.getWindowThread().setStatus("Could not load the Project.");
 			Utils.displayPopup("Opening Project", "Could not load the Project.");
-			System.out.println("[ERROR] No file specified.");
+			CLIUtils.println("[ERROR] No file specified.");
 		}
 
 	}
@@ -153,7 +174,7 @@ public class Main {
 	public static void shutdown() {
 		Main.getWindowThread().setStatus("Shutting down...");
 		SessionThread.destroySession();
-		System.out.println("[JLC] Terminating Threads...");
+		CLIUtils.println("[JLC] Terminating Threads...");
 		calculateRunnable.interrupt();
 		sessionRunnable.interrupt();
 		saveProject();
@@ -167,7 +188,7 @@ public class Main {
 
 		Main.setDmxData(temp_dmxData);
 		artnetRunnable.interrupt();
-		System.out.println("[JLC] Program shutdown");
+		CLIUtils.println("[JLC] Program shutdown");
 		System.exit(0);
 	}
 
@@ -177,7 +198,7 @@ public class Main {
 				dmxData[universe][address] = value;
 			} else {
 				Main.getWindowThread().setStatus("{setDmxByte} : The address \"+" + address + "\" you try to set is too high/low!");
-				System.out.println("{setDmxByte} Address \"" + address + "\" too high/low!");
+				CLIUtils.println("{setDmxByte} Address \"" + address + "\" too high/low!");
 			}
 		}
 	}
@@ -199,13 +220,13 @@ public class Main {
 		int userSelection = fileChooser.showSaveDialog(parentFrame);
 
 		if (userSelection == JFileChooser.APPROVE_OPTION) {
-			System.out.println("[PROJECT] Saving in progress....");
+			CLIUtils.println("[PROJECT] Saving in progress....");
 			File fileToSave = fileChooser.getSelectedFile();
 			String filePath = fileToSave.getAbsolutePath();
 			if (!fileToSave.getAbsolutePath().endsWith(".project")) {
 				filePath = fileToSave.getAbsolutePath() + ".project";
 			}
-			System.out.println("[PROJECT] " + filePath);
+			CLIUtils.println("[PROJECT] " + filePath);
 
 			try {
 				Main.getProject().setDmxData(dmxData);
@@ -214,7 +235,7 @@ public class Main {
 				XMLEncoder xml = new XMLEncoder(fos);
 				xml.setExceptionListener(new ExceptionListener() {
 					public void exceptionThrown(Exception e) {
-						System.out.println("Exception! :" + e.toString());
+						CLIUtils.println("Exception! :" + e.toString());
 					}
 				});
 				xml.writeObject(getProject());
@@ -224,21 +245,21 @@ public class Main {
 				saveJLCSettings();
 			} catch (IOException e) {
 				Main.getWindowThread().setStatus("Project could not be saved");
-				System.out.println("Project could not be saved: " + e.getMessage());
+				CLIUtils.println("Project could not be saved: " + e.getMessage());
 				Main.getJLCSettings().setProject_path("");
 				return null;
 			}
 		} else {
 			Main.getWindowThread().setStatus("Project could not be saved");
 			Utils.displayPopup("Saving Error", "Could not save the Project.");
-			System.out.println("[ERROR] Could not save!");
+			CLIUtils.println("[ERROR] Could not save!");
 		}
 		return null;
 	}
 
 	private static void saveProjectHandler() {
 		Main.getWindowThread().setStatus("Saving Project...");
-		System.out.println("Saving Project...");
+		CLIUtils.println("Saving Project...");
 		String projectname = Main.getProject().getProjectName();
 		if (projectname == null || projectname.equalsIgnoreCase("")) {
 			projectname = "last-project";
@@ -254,13 +275,13 @@ public class Main {
 			if (!Main.getJLCSettings().getProject_path().equals("")) {
 				path = Main.getJLCSettings().getProject_path();
 			}
-			System.out.println("Saving to " + path);
+			CLIUtils.println("Saving to " + path);
 			Main.getJLCSettings().setProject_path(path);
 			FileOutputStream fos = new FileOutputStream(path);
 			XMLEncoder xml = new XMLEncoder(fos);
 			xml.setExceptionListener(new ExceptionListener() {
 				public void exceptionThrown(Exception e) {
-					System.out.println("Exception! :" + e.toString());
+					CLIUtils.println("Exception! :" + e.toString());
 				}
 			});
 			xml.writeObject(getProject());
@@ -271,10 +292,10 @@ public class Main {
 			saveJLCSettings();
 		} catch (IOException e) {
 			Main.getWindowThread().setStatus("Error while saving Project");
-			System.out.println("Project could not be saved: " + e.getMessage());
+			CLIUtils.println("Project could not be saved: " + e.getMessage());
 			return;
 		}
-		System.out.println("Project was saved.");
+		CLIUtils.println("Project was saved.");
 	}
 
 	public static void saveJLCSettings() {
@@ -285,7 +306,7 @@ public class Main {
 			xml.writeObject(Main.getJLCSettings());
 			xml.close();
 			fos.close();
-			System.out.println("JLC Settings saved");
+			CLIUtils.println("JLC Settings saved");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -301,7 +322,7 @@ public class Main {
 			fis = new FileInputStream(path);
 
 			XMLDecoder xml = new XMLDecoder(fis);
-			System.out.println("Loading...: " + path);
+			CLIUtils.println("Loading...: " + path);
 			JLCSettings temp_settings;
 			temp_settings = (JLCSettings) xml.readObject();
 			xml.close();
@@ -310,11 +331,11 @@ public class Main {
 			if (Main.getProject().getDmxData() != null) {
 				Main.dmxData = Main.getProject().getDmxData();
 			}
-			System.out.println("Loaded.");
+			CLIUtils.println("Loaded.");
 		} catch (FileNotFoundException e) {
-			System.out.println("EXCEPTION: " + e.getMessage());
+			CLIUtils.println("EXCEPTION: " + e.getMessage());
 		} catch (IOException e) {
-			System.out.println("EXCEPTION: " + e.getMessage());
+			CLIUtils.println("EXCEPTION: " + e.getMessage());
 		}
 	}
 
@@ -354,11 +375,11 @@ public class Main {
 	}
 
 	public static void print(String s) {
-		System.out.println("[JLC] " + s);
+		CLIUtils.println("[JLC] " + s);
 	}
 
 	public static void notify(String s) {
-		System.out.println("[NOTIFY] - " + s);
+		CLIUtils.println("[NOTIFY] - " + s);
 	}
 
 	public static void setSessionMode(Boolean state) {
@@ -391,7 +412,7 @@ public class Main {
 
 	public static BufferedImage loadImage(String path) {
 		try {
-			System.out.println(path);
+			CLIUtils.println(path);
 			return ImageIO.read(Main.class.getResource(path));
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -400,4 +421,43 @@ public class Main {
 		return null;
 	}
 
+	public static Terminal getTerminal() {
+		return terminal;
+	}
+
+	public static void setTerminal(Terminal terminal) {
+		Main.terminal = terminal;
+	}
+
+	public static LineReader getLineReader() {
+		return lineReader;
+	}
+
+	public static void setLineReader(LineReader lineReader) {
+		Main.lineReader = lineReader;
+	}
+
+	public static AggregateCompleter getAggregateCompleter() {
+		return aggregateCompleter;
+	}
+
+	public static void setAggregateCompleter(AggregateCompleter aggregateCompleter) {
+		aggregateCompleter = aggregateCompleter;
+	}
+
+	public static ArgumentCompleter getArgumentCompleter() {
+		return argumentCompleter;
+	}
+
+	public static void setArgumentCompleter(ArgumentCompleter argumentCompleter) {
+		argumentCompleter = argumentCompleter;
+	}
+
+	public static String getConsolePrompt() {
+		return consolePrompt;
+	}
+
+	public static void setConsolePrompt(String consolePrompt) {
+		Main.consolePrompt = consolePrompt;
+	}
 }

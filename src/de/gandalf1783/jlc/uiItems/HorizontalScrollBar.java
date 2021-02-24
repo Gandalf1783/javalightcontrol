@@ -1,6 +1,7 @@
 package de.gandalf1783.jlc.uiItems;
 
 import de.gandalf1783.jlc.gfx.Assets;
+import de.gandalf1783.jlc.threads.CLIUtils;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;
@@ -48,7 +49,7 @@ public class HorizontalScrollBar extends ScrollItem {
     }
 
     public void getSliderPos() {
-        System.out.println("SliderPos: " + sliderPos);
+        CLIUtils.println("SliderPos: " + sliderPos);
     }
 
     public void setSliderLength(int sliderLength) {

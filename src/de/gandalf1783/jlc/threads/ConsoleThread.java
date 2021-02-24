@@ -1,28 +1,39 @@
 package de.gandalf1783.jlc.threads;
 
+import de.gandalf1783.jlc.commands.Command;
+import de.gandalf1783.jlc.commands.HelpCommand;
 import de.gandalf1783.jlc.main.Main;
 import de.gandalf1783.jlc.preferences.UniverseOut;
+import org.fusesource.jansi.Ansi;
+import org.jline.builtins.Completers;
+import org.jline.reader.LineReaderBuilder;
+import org.jline.reader.impl.completer.AggregateCompleter;
+import org.jline.terminal.TerminalBuilder;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+
+import static org.jline.builtins.Completers.TreeCompleter.node;
 
 public class ConsoleThread implements Runnable {
 
 	private static final Boolean shouldStop = false;
+	private static final HashMap<String, Command> cmdMap = new HashMap<String, Command>();
+
 
 	public static void runCommand(String cmd) {
 		if (cmd.equalsIgnoreCase("shutdown") || cmd.equalsIgnoreCase("exit")) {
-			System.out.println("[CONSOLE] Initiated Shutdown");
+			CLIUtils.println("[CONSOLE] Initiated Shutdown");
 			Main.shutdown();
 		}
 		if (cmd.startsWith("help")) {
-			System.out.println(" -=- HELP -=- ");
-			System.out.println("save - saves this project | With GUI");
-			System.out.println("load - loads last project | With GUI");
-			System.out.println("project name - displays current project name | project name <newname> - sets project name to <newname>");
-			System.out.println("dmx <universe> <channel> <value> - sets the corresponding value");
-			System.out.println("universe - output manager for artnet");
+			CLIUtils.println(" -=- HELP -=- ");
+			CLIUtils.println("save - saves this project | With GUI");
+			CLIUtils.println("load - loads last project | With GUI");
+			CLIUtils.println("project name - displays current project name | project name <newname> - sets project name to <newname>");
+			CLIUtils.println("dmx <universe> <channel> <value> - sets the corresponding value");
+			CLIUtils.println("universe - output manager for artnet");
 		}
 
 		if (cmd.startsWith("save")) {
@@ -37,14 +48,14 @@ public class ConsoleThread implements Runnable {
 			String[] args = cmd.split("\\s+");
 			if (args.length == 2) {
 				if (args[1].equalsIgnoreCase("name")) {
-					System.out.println("Project is named \"" + Main.getProject().getProjectName() + "\"");
+					CLIUtils.println("Project is named \"" + Main.getProject().getProjectName() + "\"");
 				}
 				if(args[1].equalsIgnoreCase("path")) {
 					if(Main.getJLCSettings().getProject_path() != null) {
 						if(Main.getJLCSettings().getProject_path().equals("")) {
-							System.out.println("Project path is empty. No recent Project was found.");
+							CLIUtils.println("Project path is empty. No recent Project was found.");
 						} else {
-							System.out.println("Project Path is "+Main.getJLCSettings().getProject_path() +"");
+							CLIUtils.println("Project Path is " + Main.getJLCSettings().getProject_path() + "");
 						}
 					}
 				}
@@ -55,7 +66,7 @@ public class ConsoleThread implements Runnable {
 						sb.append(args[i]);
 					}
 					String name = sb.toString();
-					System.out.println("Project will be named \"" + name + "\"");
+					CLIUtils.println("Project will be named \"" + name + "\"");
 					Main.getProject().setProjectName(name);
 				}
 			}
@@ -73,11 +84,11 @@ public class ConsoleThread implements Runnable {
 					if(args[2].equalsIgnoreCase("add")) {
 						int universe = Integer.parseInt(args[3]);
 						String IP = args[4];
-						System.out.println(IP + " | "+universe);
+						CLIUtils.println(IP + " | " + universe);
 					} else if(args[2].equalsIgnoreCase("remove")) {
 						int universe = Integer.parseInt(args[3]);
 						String IP = args[4];
-						System.out.println(IP + " | "+universe);
+						CLIUtils.println(IP + " | " + universe);
 
 					}
 				}
@@ -102,37 +113,38 @@ public class ConsoleThread implements Runnable {
 		}
 	}
 
+	public static void init() {
+		try {
+			Main.setAggregateCompleter(new AggregateCompleter(new Completers.TreeCompleter(
+					node("help")
+			)));
+			Main.setTerminal(TerminalBuilder.builder().system(true).dumb(true).encoding(StandardCharsets.UTF_8).name("Terminal").jna(true).jansi(true).build());
+			Main.setLineReader(LineReaderBuilder.builder().terminal(Main.getTerminal()).completer(Main.getAggregateCompleter()).build());
+			Main.setConsolePrompt(Ansi.ansi().eraseScreen().fg(Ansi.Color.BLUE).bold().a("Server").fgBright(Ansi.Color.BLACK).bold().a(" » ").reset().toString());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		cmdMap.put("help", new HelpCommand());
+		CLIUtils.println("[CONSOLE THREAD] INIT DONE");
+	}
+
 	@Override
 	public void run() {
 		init();
-		while (!shouldStop) {
-			// Enter data using BufferReader
-			BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-
-			// Reading data using readLine
-			String cmd = "";
-
+		while (true) {
 			try {
-				cmd = reader.readLine();
-				runCommand(cmd);
-			} catch (IOException e) {
-				System.out.println("[Console] EXCEPTION: " + e.getMessage());
+				String command = Main.getLineReader().readLine(Main.getConsolePrompt());
+				String[] data = command.split("\\s+");
+				if (cmdMap.containsKey(command)) {
+					cmdMap.get(command).exec(null);
+				} else {
+					CLIUtils.println("Command \"" + command + "\" not found.");
+				}
+
+
+			} catch (NumberFormatException e) {
 			}
-
 		}
-		System.out.println("[Console] Thread stopped.");
-	}
-
-	private void init() {
-		System.out.println();
-		System.out.println();
-		System.out.println();
-		System.out.println("[CONSOLE THREAD] Welcome!");
-		System.out.println("JavaLightControl " + Main.getVersion() + " by Gandalf1783 (c) Copyright 2020");
-		System.out.println("Consult \"help\" for more");
-		System.out.println();
-		System.out.println();
-		System.out.println();
 	}
 
 }

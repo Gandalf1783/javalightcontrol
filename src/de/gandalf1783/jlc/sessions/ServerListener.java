@@ -3,6 +3,7 @@ package de.gandalf1783.jlc.sessions;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import de.gandalf1783.jlc.main.Main;
+import de.gandalf1783.jlc.threads.CLIUtils;
 
 public class ServerListener extends Listener {
 
@@ -14,7 +15,7 @@ public class ServerListener extends Listener {
             Packet packet = (Packet) object;
             Packet out = new Packet();
             //out.systemUUID = Main.getJLCSettings().getSystemUUID();
-            System.out.println("[PACKET] "+packet.command +" FROM UUID "+packet.systemUUID);
+            CLIUtils.println("[PACKET] " + packet.command + " FROM UUID " + packet.systemUUID);
             if(packet.command.equalsIgnoreCase("CONNECT")) {
                 out.command = "VER?";
             }
@@ -36,7 +37,7 @@ public class ServerListener extends Listener {
             }
             if(packet.command.equalsIgnoreCase("DONE")) {
                 out.command = "APPROVED";
-                System.out.println("[SESSION] A user has joined the session.");
+                CLIUtils.println("[SESSION] A user has joined the session.");
             }
         }
     }

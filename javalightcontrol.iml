@@ -10,5 +10,6 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="ArtNetAPI" level="project" />
+    <orderEntry type="library" name="jline-3.16.0" level="project" />
   </component>
 </module>

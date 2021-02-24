@@ -1,6 +1,7 @@
 package de.gandalf1783.jlc.gfx;
 
 import de.gandalf1783.jlc.main.Main;
+import de.gandalf1783.jlc.threads.CLIUtils;
 
 import javax.swing.*;
 import java.awt.*;
@@ -39,7 +40,7 @@ public class Display {
 	}
 
 	private void createDisplay() {
-		System.out.println("Creating Display");
+		CLIUtils.println("Creating Display");
 		frame = new JFrame(title);
 		frame.setSize(width, height);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -62,7 +63,7 @@ public class Display {
 
 		frame.add(canvas);
 		//frame.pack();
-		System.out.println("Created.");
+		CLIUtils.println("Created.");
 	}
 
 }

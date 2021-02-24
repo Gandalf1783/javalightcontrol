@@ -4,6 +4,7 @@ import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import de.gandalf1783.jlc.main.Main;
 import de.gandalf1783.jlc.preferences.Project;
+import de.gandalf1783.jlc.threads.CLIUtils;
 
 public class ClientListener extends Listener {
 
@@ -13,7 +14,7 @@ public class ClientListener extends Listener {
             Packet packet = (Packet) object;
             Packet out = new Packet();
             //out.systemUUID = Main.getJLCSettings().getSystemUUID();
-            System.out.println("[PACKET] "+packet.command+" FROM UUID "+packet.systemUUID);
+            CLIUtils.println("[PACKET] " + packet.command + " FROM UUID " + packet.systemUUID);
             if(packet.command.equalsIgnoreCase("VER?")) {
                 out.command = Main.NET_VERSION;
             }
@@ -23,7 +24,7 @@ public class ClientListener extends Listener {
                 out.command = "SAVED-REQUESTING-NET";
             }
             if(packet.command.equalsIgnoreCase("ABORT")) {
-                System.out.println("[SESSION] - Session was closed.");
+                CLIUtils.println("[SESSION] - Session was closed.");
                 connection.close();
             }
             if(packet.command.equalsIgnoreCase("APPROVED")) {

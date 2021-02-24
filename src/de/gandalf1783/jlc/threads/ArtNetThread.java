@@ -47,8 +47,8 @@ public class ArtNetThread implements Runnable {
 	}
 
 	private void init() {
-        System.out.println("[ArtNet] Thread started.");
-        artnet = new ArtNetClient();
+        CLIUtils.println("[ArtNet] Thread started.");
+		artnet = new ArtNetClient();
         artnet.start();
         artNetServer = artnet.getArtNetServer();
 
@@ -111,11 +111,11 @@ public class ArtNetThread implements Runnable {
 					}
 					Thread.sleep(timeout);
 				} catch (InterruptedException e) {
-					System.out.println("ArtNet Thread: Sleep couldn't be executed due exiting the app");
+					CLIUtils.println("ArtNet Thread: Sleep couldn't be executed due exiting the app");
 				}
 			}
 
 		}
-		System.out.println("[ArtNet] Thread stopped.");
+		CLIUtils.println("[ArtNet] Thread stopped.");
 	}
 }

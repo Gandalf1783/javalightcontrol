@@ -1,5 +1,7 @@
 package de.gandalf1783.jlc.effects;
 
+import de.gandalf1783.jlc.threads.CLIUtils;
+
 import java.util.UUID;
 
 public class Exponential {
@@ -54,20 +56,20 @@ public class Exponential {
 	}
 
 	public void calculate() {
-		System.out.println("Calculate: \n Target: "+valueTarget +" Now: "+valueNow +" Left frames: "+frames);
-		faktor = ((valueTarget/valueNow)/frames);
+		CLIUtils.println("Calculate: \n Target: " + valueTarget + " Now: " + valueNow + " Left frames: " + frames);
+		faktor = ((valueTarget / valueNow) / frames);
 		frames--;
-		valueNow = (valueNow*faktor);
-		System.out.println("Calculation done. Now: "+valueNow);
+		valueNow = (valueNow * faktor);
+		CLIUtils.println("Calculation done. Now: " + valueNow);
 	}
 
 	public boolean isFinished() {
-		System.out.println("Checking if finished");
+		CLIUtils.println("Checking if finished");
 		if (frames == 0) {
-			System.out.println("Has finished.");
+			CLIUtils.println("Has finished.");
 			return true;
 		}
-		System.out.println("Isnt finished. ");
+		CLIUtils.println("Isnt finished. ");
 		return false;
 	}
 
