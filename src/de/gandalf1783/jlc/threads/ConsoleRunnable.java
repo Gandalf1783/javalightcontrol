@@ -37,7 +37,7 @@ public class ConsoleRunnable implements Runnable {
 		}
 
 		if (cmd.startsWith("save")) {
-			Main.saveProject();
+			Main.saveProject(Main.getJLCSettings().getProject_path());
 		}
 
 		if (cmd.startsWith("load")) {
@@ -131,7 +131,7 @@ public class ConsoleRunnable implements Runnable {
 
 			Main.setTerminal(TerminalBuilder.builder().system(true).dumb(true).encoding(StandardCharsets.UTF_8).name("Terminal").jna(true).jansi(true).build());
 			Main.setLineReader(LineReaderBuilder.builder().terminal(Main.getTerminal()).completer(completer).build());
-			Main.setConsolePrompt(Ansi.ansi().eraseScreen().fg(Ansi.Color.BLUE).bold().a("Server").fgBright(Ansi.Color.BLACK).bold().a(" » ").reset().toString());
+			Main.setConsolePrompt(Ansi.ansi().eraseScreen().fg(Ansi.Color.BLUE).bold().a("JLC").fgBright(Ansi.Color.BLACK).bold().a(" » ").reset().toString());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -143,6 +143,7 @@ public class ConsoleRunnable implements Runnable {
 		cmdMap.put("saveas", new SaveAsCommand());
 		cmdMap.put("save", new SaveCommand());
 		cmdMap.put("universe", new UniverseCommand());
+		cmdMap.put("exit", new ExitCommand());
 
 		CLIUtils.println("[CONSOLE THREAD] INIT DONE");
 	}
@@ -155,10 +156,10 @@ public class ConsoleRunnable implements Runnable {
 				String command = Main.getLineReader().readLine(Main.getConsolePrompt());
 				String[] data = command.split("\\s+");
 				String[] args = Arrays.copyOfRange(data, 1, data.length);
-				if (cmdMap.containsKey(command)) {
+				if (cmdMap.containsKey(data[0])) {
 					cmdMap.get(command).exec(args);
 				} else {
-					CLIUtils.println("Command \"" + command + "\" not found.");
+					CLIUtils.println("Command \"" + data[0] + "\" not found.");
 				}
 			} catch (NumberFormatException e) {
 				CLIUtils.println("NumberFormatException was thrown in ConsoleThread.", Ansi.Color.RED);

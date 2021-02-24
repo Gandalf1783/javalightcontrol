@@ -47,18 +47,21 @@ public class Display {
 		frame.setResizable(false);
 		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
-		frame.setBackground(hex2Rgb("#484848"));
+
+		frame.setBackground(hex2Rgb("#484848")); // TODO: Probably redundant!
+
 		canvas = new Canvas();
 		canvas.setPreferredSize(new Dimension(width, height));
 		canvas.setMaximumSize(new Dimension(width, height));
 		canvas.setMinimumSize(new Dimension(width, height));
 		canvas.setFocusable(false);
 		canvas.setBackground(hex2Rgb("#484848"));
+
 		frame.addWindowListener(new WindowAdapter() {
 			public void windowClosing(final WindowEvent e) {
 				Main.shutdown();
 			}
-		});
+		}); // Execute shutdown method upon closing the window.
 
 
 		frame.add(canvas);

@@ -98,7 +98,7 @@ public class WindowRunnble implements Runnable {
 		Button project_save = new Button(0, 40, 40, 110, "Save Project", g) {
 			@Override
 			public void onClick(MouseEvent e) {
-				Main.saveProject();
+				Main.saveProject(Main.getJLCSettings().getProject_path());
 			}
 		};
 		Button project_save_as = new Button(0, 80, 40, 110, "Save Project As", g) {

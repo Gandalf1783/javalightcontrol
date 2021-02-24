@@ -25,7 +25,7 @@ public class Main {
 
 	private static byte[][] dmxData = null;
 
-	public static final String VERSION = "BETA-1.3";
+	public static final String VERSION = "BETA-1.3.2";
 	public static final String NET_VERSION = "DEV-1.1";
 	// Setting up Threads
 
@@ -173,13 +173,13 @@ public class Main {
 	}
 
 	/**
-	 * Handles the exit of the Program
+	 * Handles the exit of the Program (saves prject, etc.)
 	 */
 	public static void shutdown() {
 		Main.getWindowRunnable().setStatus("Shutting down...");
 		SessionRunnable.destroySession();
 		CLIUtils.println("[JLC] Terminating Threads...");
-		saveProject();
+		saveProject(getJLCSettings().getProject_path());
 		saveJLCSettings();
 		byte[][] temp_dmxData = new byte[15][512];
 		for (int i = 0; i < 15; i++) {
@@ -211,93 +211,59 @@ public class Main {
 		}
 	}
 
-	public static void saveProject() {
-		if (!Main.getJLCSettings().getProject_path().equalsIgnoreCase("")) {
-			saveProjectHandler();
-		} else {
-			saveProjectHandlerGUI();
-		}
-	}
-
-	public static String saveProjectHandlerGUI() {
+	/**
+	 * Opens a UI for saving the current project (FileChooser UI)
+	 *
+	 * @return
+	 */
+	public static void saveProjectHandlerGUI() {
 		JFrame parentFrame = new JFrame();
-
 		JFileChooser fileChooser = new JFileChooser();
 		fileChooser.setDialogTitle("Specify a file to save");
 
 		int userSelection = fileChooser.showSaveDialog(parentFrame);
 
 		if (userSelection == JFileChooser.APPROVE_OPTION) {
-			CLIUtils.println("[PROJECT] Saving in progress....");
 			File fileToSave = fileChooser.getSelectedFile();
 			String filePath = fileToSave.getAbsolutePath();
+
 			if (!fileToSave.getAbsolutePath().endsWith(".project")) {
 				filePath = fileToSave.getAbsolutePath() + ".project";
 			}
-			CLIUtils.println("[PROJECT] " + filePath);
-
-			try {
-				Main.getProject().setDmxData(dmxData);
-				Main.getJLCSettings().setProject_path(filePath);
-				FileOutputStream fos = new FileOutputStream(filePath);
-				XMLEncoder xml = new XMLEncoder(fos);
-				xml.setExceptionListener(e -> CLIUtils.println("Exception! :" + e.toString()));
-				xml.writeObject(getProject());
-				xml.close();
-				fos.close();
-				jlcSettings.setLatest_save(new Timestamp(System.currentTimeMillis()));
-				saveJLCSettings();
-			} catch (IOException e) {
-				Main.getWindowRunnable().setStatus("Project could not be saved");
-				CLIUtils.println("Project could not be saved: " + e.getMessage());
-				Main.getJLCSettings().setProject_path("");
-				return null;
-			}
-		} else {
-			Main.getWindowRunnable().setStatus("Project could not be saved");
-			Utils.displayPopup("Saving Error", "Could not save the Project.");
-			CLIUtils.println("[ERROR] Could not save!");
+			saveProject(filePath);
 		}
-		return null;
 	}
 
-	private static void saveProjectHandler() {
-		Main.getWindowRunnable().setStatus("Saving Project...");
-		CLIUtils.println("Saving Project...");
-		String projectname = Main.getProject().getProjectName();
-		if (projectname == null || projectname.equalsIgnoreCase("")) {
-			projectname = "last-project";
+	public static void saveProject(String filePath) {
+		CLIUtils.println("[PROJECT] Saving Projectfiles", Ansi.Color.GREEN);
+		if (!Main.getJLCSettings().getProject_path().equals("") && filePath.equalsIgnoreCase("")) {
+			filePath = Main.getJLCSettings().getProject_path();
+		} else {
+			saveProjectHandlerGUI();
 		}
-		if (projectname.contains("\\s+")) {
-			projectname.replace("\\s+", "-");
-		}
-		Main.getProject().setDmxData(dmxData);
-
 		try {
-			String path = System.getProperty("user.dir");
-			path = path + "\\" + projectname + ".project";
-			if (!Main.getJLCSettings().getProject_path().equals("")) {
-				path = Main.getJLCSettings().getProject_path();
-			}
-			CLIUtils.println("Saving to " + path);
-			Main.getJLCSettings().setProject_path(path);
-			FileOutputStream fos = new FileOutputStream(path);
+			Main.getProject().setDmxData(dmxData);
+			Main.getJLCSettings().setProject_path(filePath);
+			FileOutputStream fos = new FileOutputStream(filePath);
 			XMLEncoder xml = new XMLEncoder(fos);
 			xml.setExceptionListener(e -> CLIUtils.println("Exception! :" + e.toString()));
 			xml.writeObject(getProject());
 			xml.close();
 			fos.close();
-			Main.getWindowRunnable().setStatus("Project has been saved.");
 			jlcSettings.setLatest_save(new Timestamp(System.currentTimeMillis()));
 			saveJLCSettings();
 		} catch (IOException e) {
-			Main.getWindowRunnable().setStatus("Error while saving Project");
+			Main.getWindowRunnable().setStatus("Project could not be saved");
 			CLIUtils.println("Project could not be saved: " + e.getMessage());
+			Main.getJLCSettings().setProject_path("");
 			return;
 		}
-		CLIUtils.println("Project was saved.");
 	}
 
+
+	/**
+	 * Saves the internal Settings to the file.
+	 */
 	private static void saveJLCSettings() {
 		try {
 			String path = System.getProperty("user.dir");
@@ -313,6 +279,9 @@ public class Main {
 
 	}
 
+	/**
+	 * Loads the internal Settings from the file.
+	 */
 	private static void loadJLCSettings() {
 		try {
 			String path = System.getProperty("user.dir");

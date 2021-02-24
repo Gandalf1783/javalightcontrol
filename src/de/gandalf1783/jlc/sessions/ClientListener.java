@@ -19,7 +19,7 @@ public class ClientListener extends Listener {
                 out.command = Main.NET_VERSION;
             }
             if(packet.command.equalsIgnoreCase("SAVE-PROJECT-LOAD-NET")) {
-                Main.saveProject();
+                Main.saveProject(Main.getJLCSettings().getProject_path());
                 out.command = "SAVED-REQUESTING-NET";
             }
             if(packet.command.equalsIgnoreCase("ABORT")) {

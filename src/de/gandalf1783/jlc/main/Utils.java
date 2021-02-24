@@ -17,6 +17,7 @@ public class Utils {
         frame.setResizable(false);
         frame.setVisible(true);
     }
+
     public static void displayPopup(String title, String description, int width, int height) {
         JFrame frame = new JFrame("JLC - "+title);
         JPanel panel = new JPanel();
