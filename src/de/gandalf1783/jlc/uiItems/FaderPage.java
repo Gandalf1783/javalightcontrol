@@ -61,9 +61,11 @@ public class FaderPage extends UiItem {
                     counter = 0;
                 VerticalScrollBar vsb = new VerticalScrollBar(x + (counter * 40) + (counter * 3), y, g, true, true, u, c);
                 if (u < Main.getProject().getUniverseLimit()) {
-                    byte i = Main.getDmxData()[u][c];
-                    int j = i & 0xFF;
-                    vsb.setSliderPosPercent((j * 100) / 255);
+                    if (Main.getDmxData() != null) {
+                        byte i = Main.getDmxData()[u][c];
+                        int j = i & 0xFF;
+                        vsb.setSliderPosPercent((double) (j * 100) / 255);
+                    }
                 }
                 faders.add(vsb);
                 counter++;

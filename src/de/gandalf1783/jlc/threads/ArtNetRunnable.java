@@ -5,11 +5,11 @@ import ch.bildspur.artnet.ArtNetServer;
 import de.gandalf1783.jlc.main.Main;
 import de.gandalf1783.jlc.preferences.UniverseOut;
 
-public class ArtNetThread implements Runnable {
+public class ArtNetRunnable implements Runnable {
 
 	private static Boolean shouldStop = false;
 	public static ArtNetServer artNetServer;
-	private static int fps = 44;
+	private static int fps = 40;
 	private static Boolean blackout = false;
 	public static ArtNetClient artnet;
 	private static byte[][] dmxBlackout = null;
@@ -27,7 +27,7 @@ public class ArtNetThread implements Runnable {
 	}
 
 	public static void setShouldStop(Boolean shouldStop) {
-		ArtNetThread.shouldStop = shouldStop;
+		ArtNetRunnable.shouldStop = shouldStop;
 	}
 
 	public static void shouldStop() {
@@ -39,7 +39,7 @@ public class ArtNetThread implements Runnable {
 	}
 
 	public static void setFps(int fps) {
-		ArtNetThread.fps = fps;
+		ArtNetRunnable.fps = fps;
 	}
 
 	public static void toggleBlackout() {
@@ -47,19 +47,20 @@ public class ArtNetThread implements Runnable {
 	}
 
 	private void init() {
-        CLIUtils.println("[ArtNet] Thread started.");
+		CLIUtils.println("[ArtNet] Thread started.");
 		artnet = new ArtNetClient();
-        artnet.start();
-        artNetServer = artnet.getArtNetServer();
+		artnet.start();
+		artNetServer = artnet.getArtNetServer();
 
-        byte[][] temp_dmxData = new byte[Main.getProject().getUniverseLimit()][512];
-        for (int i = 0; i < Main.getProject().getUniverseLimit(); i++) {
-            for (int j = 0; j < 512; j++) {
-                temp_dmxData[i][j] = (byte) 0;
-            }
-        }
-        dmxBlackout = temp_dmxData;
-    }
+		byte[][] temp_dmxData = new byte[Main.getProject().getUniverseLimit()][512];
+		for (int i = 0; i < Main.getProject().getUniverseLimit(); i++) {
+			for (int j = 0; j < 512; j++) {
+				temp_dmxData[i][j] = (byte) 0;
+			}
+		}
+		dmxBlackout = temp_dmxData;
+		shouldStop = false;
+	}
 
 	@Override
 	public void run() {
@@ -70,7 +71,7 @@ public class ArtNetThread implements Runnable {
 			final int TARGET_FPS = 30;
 			final long OPTIMAL_TIME = 1000000000 / TARGET_FPS;
 			long lastFpsTime = 0;
-			while (true) {
+			while (!shouldStop) {
 
 				long now = System.nanoTime();
 				long updateLength = now - lastLoopTime;
@@ -96,8 +97,10 @@ public class ArtNetThread implements Runnable {
 										artnet.unicastDmx(uout.getAddresses().get(j), Main.getProject().getSubNet(), i,
 												dmxBlackout[i]);
 									} else {
-										artnet.unicastDmx(uout.getAddresses().get(j), Main.getProject().getSubNet(), i,
-												Main.getUniverseData(i));
+										if (Main.getUniverseData(i) != null) {
+											artnet.unicastDmx(uout.getAddresses().get(j), Main.getProject().getSubNet(), i,
+													Main.getUniverseData(i));
+										}
 									}
 								}
 							}

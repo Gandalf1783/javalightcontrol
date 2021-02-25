@@ -8,11 +8,12 @@ import de.gandalf1783.jlc.sessions.ServerListener;
 
 import java.io.IOException;
 
-public class SessionThread implements Runnable {
+public class SessionRunnable implements Runnable {
 
 	private static Boolean shouldStop = false;
 	private static Server server;
 	private static Boolean isServer = false;
+
 	public static void createSession() {
 		isServer = true;
 		server = new Server();
@@ -36,7 +37,7 @@ public class SessionThread implements Runnable {
 	}
 
 	public static void setShouldStop(final Boolean shouldStop) {
-		SessionThread.shouldStop = shouldStop;
+		SessionRunnable.shouldStop = shouldStop;
 	}
 
 	@Override

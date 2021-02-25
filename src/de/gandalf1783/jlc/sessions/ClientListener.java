@@ -20,16 +20,17 @@ public class ClientListener extends Listener {
             }
             if(packet.command.equalsIgnoreCase("SAVE-PROJECT-LOAD-NET")) {
                 Main.saveProject();
-                Main.saveJLCSettings();
                 out.command = "SAVED-REQUESTING-NET";
             }
             if(packet.command.equalsIgnoreCase("ABORT")) {
                 CLIUtils.println("[SESSION] - Session was closed.");
                 connection.close();
             }
+            /*
             if(packet.command.equalsIgnoreCase("APPROVED")) {
-
+                //TODO: IMPLEMENT NETWORK
             }
+            */
             if(packet.command.startsWith("NOTIFY#")) {
                 String notify = packet.command.replace("NOTIFY#", "");
                 String[] args = notify.split("_");

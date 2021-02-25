@@ -4,8 +4,10 @@ import javax.swing.*;
 
 public class Utils {
 
+    //TODO: Use own Thread for this!!!
+
     public static void displayPopup(String title, String description) {
-        JFrame frame = new JFrame("JLC - "+title);
+        JFrame frame = new JFrame("JLC - " + title);
         JPanel panel = new JPanel();
         JLabel label = new JLabel();
         label.setText(description);

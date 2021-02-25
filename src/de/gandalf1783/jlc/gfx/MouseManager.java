@@ -42,7 +42,7 @@ public class MouseManager implements MouseListener, MouseMotionListener {
 		else if (e.getButton() == MouseEvent.BUTTON3)
 			rightPressed = true;
 
-		Main.getWindowThread().onMouseClicked(e);
+		Main.getWindowRunnable().onMouseClicked(e);
 	}
 
 	@Override
@@ -52,19 +52,19 @@ public class MouseManager implements MouseListener, MouseMotionListener {
 		else if (e.getButton() == MouseEvent.BUTTON3)
 			rightPressed = false;
 
-		Main.getWindowThread().onMouseRelease(e);
+		Main.getWindowRunnable().onMouseRelease(e);
 	}
 
 	@Override
 	public void mouseMoved(MouseEvent e) {
 		mouseX = e.getX();
 		mouseY = e.getY();
-		Main.getWindowThread().onMouseMove(e);
+		Main.getWindowRunnable().onMouseMove(e);
 	}
 
 	@Override
 	public void mouseDragged(MouseEvent e) {
-		Main.getWindowThread().onMouseDragged(e);
+		Main.getWindowRunnable().onMouseDragged(e);
 	}
 
 	@Override

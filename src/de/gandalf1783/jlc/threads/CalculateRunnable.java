@@ -3,9 +3,9 @@ package de.gandalf1783.jlc.threads;
 import de.gandalf1783.jlc.effects.Effect;
 import de.gandalf1783.jlc.main.Main;
 
-public class CalculateThread implements Runnable {
+public class CalculateRunnable implements Runnable {
 
-	private static final Boolean shouldStop = false;
+	private static Boolean shouldStop = false;
 
 	public static Effect[] calculatingEffects;
 
@@ -47,6 +47,7 @@ public class CalculateThread implements Runnable {
 	private void init() {
 		calculatingEffects = new Effect[0];
 		CLIUtils.println("[Calculation] Thread started.");
+		shouldStop = false;
 	}
 
 	public static void stopEffect(int index) {
@@ -77,7 +78,7 @@ public class CalculateThread implements Runnable {
 
 			final long OPTIMAL_TIME = 1000000000 / TARGET_FPS;
 			long lastFpsTime = 0;
-			while (true) {
+			while (!shouldStop) {
 
 				long now = System.nanoTime();
 				long updateLength = now - lastLoopTime;

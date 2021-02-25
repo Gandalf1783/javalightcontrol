@@ -16,17 +16,62 @@ import java.awt.image.BufferStrategy;
 import java.net.NetworkInterface;
 import java.util.ArrayList;
 
-public class WindowThread implements Runnable {
+public class WindowRunnble implements Runnable {
 
 	private static Boolean shouldStop = false;
 
 	private Display display;
 	private BufferStrategy bs;
 	private Graphics g;
-	ArrayList<ArrayList<UiItem>> items = new ArrayList<ArrayList<UiItem>>(4);
+	ArrayList<ArrayList<UiItem>> items = new ArrayList<>(4);
 	private MouseManager mouseManager;
 	private int currentPage = 0;
 	private String status = "Booting...";
+
+	public static Boolean getShouldStop() {
+		return shouldStop;
+	}
+
+	public static void setShouldStop(final Boolean shouldStop) {
+		WindowRunnble.shouldStop = shouldStop;
+
+	}
+
+	@Override
+	public void run() {
+		init();
+
+		int fps = 24;
+		double timePerTick;
+		timePerTick = (double) 1000000000 / fps;
+		double delta = 0;
+		long now;
+		long lastTime = System.nanoTime();
+		long timer = 0;
+		int ticks = 0;
+
+		while (!shouldStop) {
+
+			now = System.nanoTime();
+			delta += (now - lastTime) / timePerTick;
+			timer += now - lastTime;
+			lastTime = now;
+
+			if (delta >= 1) {
+				render();
+				ticks++;
+				delta--;
+			}
+
+			if (timer >= 1000000000) {
+				ticks = 0;
+				timer = 0;
+			}
+
+		}
+
+		CLIUtils.println("[Window] Thread stopped.");
+	}
 
 	private void init() {
 		Assets.init();
@@ -65,44 +110,44 @@ public class WindowThread implements Runnable {
 		ToggleButton blackout = new ToggleButton(0, 120, 40, 110, "Blackout", g) {
 			@Override
 			public void onToggle(MouseEvent e) {
-				ArtNetThread.toggleBlackout();
+				ArtNetRunnable.toggleBlackout();
 			}
 		};
 		Button effects = new Button(0, 160, 40, 110, "Effects", g) {
 			@Override
 			public void onClick(MouseEvent e) {
-				Main.getWindowThread().setCurrentPage(2);
+				Main.getWindowRunnable().setCurrentPage(2);
 			}
 		};
 		Button faders = new Button(0, 200, 40, 110, "Faders", g) {
 			@Override
 			public void onClick(MouseEvent e) {
-				Main.getWindowThread().setCurrentPage(3);
+				Main.getWindowRunnable().setCurrentPage(3);
 			}
 		};
 		Button settings = new Button(0, 432, 40, 110, "Settings", g) {
 			@Override
 			public void onClick(MouseEvent e) {
-				Main.getWindowThread().setCurrentPage(1);
+				Main.getWindowRunnable().setCurrentPage(1);
 			}
 		};
 		Button home = new Button(0, 0, 40, 110, "Home", g) {
 			@Override
 			public void onClick(MouseEvent e) {
-				Main.getWindowThread().setCurrentPage(0);
+				Main.getWindowRunnable().setCurrentPage(0);
 			}
 		};
 		Button backToSettings = new Button(0, 0, 40, 110, "<- Settings", g) {
 			@Override
 			public void onClick(MouseEvent e) {
 
-				Main.getWindowThread().setCurrentPage(1);
+				Main.getWindowRunnable().setCurrentPage(1);
 			}
 		};
 		Button session = new Button(0, 40, 40, 110, "Sessions", g) {
 			@Override
 			public void onClick(MouseEvent e) {
-				Main.getWindowThread().setCurrentPage(4);
+				Main.getWindowRunnable().setCurrentPage(4);
 			}
 		};
 
@@ -129,51 +174,6 @@ public class WindowThread implements Runnable {
 		items.add(page_effects);
 		items.add(page_faders);
 		items.add(page_session);
-	}
-
-
-	@Override
-	public void run() {
-		init();
-
-		int fps = 24;
-		double timePerTick = 1000000000 / fps;
-		double delta = 0;
-		long now;
-		long lastTime = System.nanoTime();
-		long timer = 0;
-		int ticks = 0;
-
-		while (!shouldStop) {
-
-			now = System.nanoTime();
-			delta += (now - lastTime) / timePerTick;
-			timer += now - lastTime;
-			lastTime = now;
-
-			if (delta >= 1) {
-				render();
-				ticks++;
-				delta--;
-			}
-
-			if (timer >= 1000000000) {
-				ticks = 0;
-				timer = 0;
-			}
-
-		}
-
-		CLIUtils.println("[Window] Thread stopped.");
-	}
-
-	public static Boolean getShouldStop() {
-		return shouldStop;
-	}
-
-	public static void setShouldStop(final Boolean shouldStop) {
-		WindowThread.shouldStop = shouldStop;
-
 	}
 
 	public void onMouseMove(MouseEvent e) {

@@ -1,7 +1,6 @@
 package de.gandalf1783.jlc.threads;
 
-import de.gandalf1783.jlc.commands.Command;
-import de.gandalf1783.jlc.commands.HelpCommand;
+import de.gandalf1783.jlc.commands.*;
 import de.gandalf1783.jlc.main.Main;
 import de.gandalf1783.jlc.preferences.UniverseOut;
 import org.fusesource.jansi.Ansi;
@@ -12,16 +11,17 @@ import org.jline.terminal.TerminalBuilder;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.HashMap;
 
 import static org.jline.builtins.Completers.TreeCompleter.node;
 
-public class ConsoleThread implements Runnable {
+public class ConsoleRunnable implements Runnable {
 
 	private static final Boolean shouldStop = false;
-	private static final HashMap<String, Command> cmdMap = new HashMap<String, Command>();
+	private static final HashMap<String, Command> cmdMap = new HashMap<>();
 
-
+	//TODO: Transfer this Command Structure via the COMMAND Interface!
 	public static void runCommand(String cmd) {
 		if (cmd.equalsIgnoreCase("shutdown") || cmd.equalsIgnoreCase("exit")) {
 			CLIUtils.println("[CONSOLE] Initiated Shutdown");
@@ -115,34 +115,53 @@ public class ConsoleThread implements Runnable {
 
 	public static void init() {
 		try {
-			Main.setAggregateCompleter(new AggregateCompleter(new Completers.TreeCompleter(
-					node("help")
-			)));
+			AggregateCompleter completer = new AggregateCompleter(new Completers.TreeCompleter(
+					node("help"),
+					node("version"),
+					node("load"),
+					node("save"),
+					node("saveas"),
+					node("universe"),
+					node("project",
+							node("path"),
+							node("name"),
+							node("name", "<name>")
+					)
+			));
+
 			Main.setTerminal(TerminalBuilder.builder().system(true).dumb(true).encoding(StandardCharsets.UTF_8).name("Terminal").jna(true).jansi(true).build());
-			Main.setLineReader(LineReaderBuilder.builder().terminal(Main.getTerminal()).completer(Main.getAggregateCompleter()).build());
+			Main.setLineReader(LineReaderBuilder.builder().terminal(Main.getTerminal()).completer(completer).build());
 			Main.setConsolePrompt(Ansi.ansi().eraseScreen().fg(Ansi.Color.BLUE).bold().a("Server").fgBright(Ansi.Color.BLACK).bold().a(" » ").reset().toString());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+
 		cmdMap.put("help", new HelpCommand());
+		cmdMap.put("version", new VersionCommand());
+		cmdMap.put("load", new LoadCommand());
+		cmdMap.put("project", new ProjectCommand());
+		cmdMap.put("saveas", new SaveAsCommand());
+		cmdMap.put("save", new SaveCommand());
+		cmdMap.put("universe", new UniverseCommand());
+
 		CLIUtils.println("[CONSOLE THREAD] INIT DONE");
 	}
 
 	@Override
 	public void run() {
 		init();
-		while (true) {
+		while (!shouldStop) {
 			try {
 				String command = Main.getLineReader().readLine(Main.getConsolePrompt());
 				String[] data = command.split("\\s+");
+				String[] args = Arrays.copyOfRange(data, 1, data.length);
 				if (cmdMap.containsKey(command)) {
-					cmdMap.get(command).exec(null);
+					cmdMap.get(command).exec(args);
 				} else {
 					CLIUtils.println("Command \"" + command + "\" not found.");
 				}
-
-
 			} catch (NumberFormatException e) {
+				CLIUtils.println("NumberFormatException was thrown in ConsoleThread.", Ansi.Color.RED);
 			}
 		}
 	}
