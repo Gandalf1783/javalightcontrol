@@ -20,11 +20,12 @@ It is compiled using the OpenJDK 13.0.2.
 
 ## Work In Progess:
 
-1. Refactoring the Console - Adding Commands (Mostly done), Command Autocomplete via (TAB) Key (Current Focus)
-2. Adding Auto-Save supports (to prevent data-loss in case of application crash)
-3. User Interface
-4. Commandline support (Commands are unstable and not safe to use yet)
-5. Session Support (Multi-User)
+1. Include the UI (default UI) into the jar itself.
+2. Refactoring the Console - Adding Commands (Mostly done), Command Autocomplete via (TAB) Key (Current Focus)
+3. Adding Auto-Save supports (to prevent data-loss in case of application crash)
+4. User Interface
+5. Commandline support (Commands are unstable and not safe to use yet)
+6. Session Support (Multi-User)
 
 ## To Do:
 
